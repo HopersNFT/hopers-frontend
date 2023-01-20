@@ -14,7 +14,7 @@ import {
 } from "../../features/collections/collectionsSlice";
 import { getCustomTokenId, getTokenIdNumber } from "../../hook/useFetch";
 import useMatchBreakpoints from "../../hook/useMatchBreakpoints";
-import { TokenType } from "../../types/tokens";
+import { TokenStatus, TokenType } from "../../types/tokens";
 import { addSuffix } from "../../util/string";
 import Advertise, { Advertise1 } from "../../components/Advertise";
 import Text from "../../components/Text";
@@ -93,7 +93,8 @@ const Home: React.FC = () => {
 						?.usd || 0;
 				const crrValue = Number.isNaN(Number(history.amount))
 					? 0
-					: (Number(history.amount) * crrUsd) / 1e6;
+					: (Number(history.amount) * crrUsd) /
+					  (TokenStatus[history.denom as TokenType].decimal || 6);
 				// tradesVolumeResult += crrValue;
 				if (now - (history.time || now) <= 60 * 60 * 24 * 30) {
 					// if the sale is hold in the last 30 days
@@ -284,18 +285,11 @@ const Home: React.FC = () => {
 					<ButtonContainer>
 						<Button
 							style={{ minWidth: isMobile ? "60px" : "" }}
-							// onClick={NotifyComingSoon}
-							disabled
+							onClick={() => history.push("/swap")}
+							// disabled
 						>
 							Swap
 						</Button>
-						{/* <Button
-              style={{ minWidth: isMobile ? "60px" : "" }}
-              colored
-              onClick={() => history.push("/ido")}
-            >
-              IDO
-            </Button> */}
 						<Button
 							style={{ minWidth: isMobile ? "60px" : "" }}
 							onClick={() => history.push("/collections/explore")}
@@ -316,11 +310,7 @@ const Home: React.FC = () => {
 						Cosmos with the ability to distribute tokens and raise liquidity.
 					</Text>
 					<ButtonContainer>
-						<Button
-							colored
-							disabled
-							// onClick={NotifyComingSoon}
-						>
+						<Button colored onClick={() => history.push("/ido")}>
 							Explore
 						</Button>
 						<Button
@@ -352,7 +342,8 @@ const Home: React.FC = () => {
 							<Button
 								colored
 								// onClick={NotifyComingSoon}
-								disabled
+								onClick={() => history.push("/swap")}
+								// disabled
 							>
 								Swap Now
 							</Button>
@@ -501,13 +492,15 @@ const Home: React.FC = () => {
 						<Button
 							colored
 							// onClick={NotifyComingSoon}
-							disabled
+							// disabled
+							onClick={() => history.push(`/liquidity`)}
 						>
 							Liquidity
 						</Button>
 						<Button
 							// onClick={NotifyComingSoon}
-							disabled
+							// disabled
+							onClick={() => history.push(`/bond`)}
 						>
 							Stake
 						</Button>

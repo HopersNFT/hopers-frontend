@@ -11,7 +11,14 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.RAW]: "", // junoswap-raw-dao
 	[TokenType.NETA]: "neta",
 	[TokenType.ATOM]: "cosmos",
-	[TokenType.AXELAR]: "axlusdc",
+	[TokenType.USDC]: "axlusdc",
+	[TokenType.HOPERS]: "",
+	[TokenType.PUNK]: "juno-punk",
+	[TokenType.HUAHUA]: "chihuahua-token",
+	[TokenType.CANLAB]: "",
+	[TokenType.RED]: "",
+	[TokenType.BLUE]: "",
+	[TokenType.WYND]: "wynd",
 };
 
 const CoinGeckoAPIKey = "CG-CV5rXz5JpbGcc36wL76u5gnd";
@@ -24,14 +31,12 @@ export const DEFAULT_COLLECTION_STATE = {
 	total: 0,
 };
 
-let initialState: TokenPriceType = {
-	[TokenType.HOPE]: null,
-	[TokenType.JUNO]: null,
-	[TokenType.RAW]: null,
-	[TokenType.NETA]: null,
-	[TokenType.ATOM]: null,
-	[TokenType.AXELAR]: null,
-};
+const initialState: TokenPriceType = (
+	Object.keys(TokenType) as Array<keyof typeof TokenType>
+).reduce(
+	(result, key) => ({ ...result, [TokenType[key]]: null }),
+	{}
+) as TokenPriceType;
 
 export enum TokenHistoryPeriod {
 	"DAILY",
@@ -177,6 +182,10 @@ export const tokenPricesSlice = createSlice({
 				}
 			);
 		},
+		setTokenPrice: (state, action: PayloadAction<[TokenType, any]>) => {
+			const [key, data] = action.payload;
+			state[key] = data;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchTokenPrices.fulfilled, (state, action) => {
@@ -188,6 +197,6 @@ export const tokenPricesSlice = createSlice({
 	},
 });
 
-export const { clearTokenPrice } = tokenPricesSlice.actions;
+export const { clearTokenPrice, setTokenPrice } = tokenPricesSlice.actions;
 
 export default tokenPricesSlice.reducer;

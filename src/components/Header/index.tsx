@@ -74,16 +74,17 @@ const HeaderLinks = [
 	{
 		title: "Swap",
 		icon: SwapIcon,
-		url: "soon",
+		url: "/swap",
+		selectedUrl: ["/swap", "/liquidity"],
 		children: [
 			{
 				title: "Swap",
-				url: "soon",
+				url: "/swap",
 				icon: SwapIcon,
 			},
 			{
 				title: "Liquidity",
-				url: "soon",
+				url: "/liquidity",
 				icon: SwapIcon,
 			},
 		],
@@ -113,24 +114,25 @@ const HeaderLinks = [
 	},
 	{
 		title: "Earn",
-		url: "soon",
+		url: "/bond",
+		selectedUrl: ["/bond", "/stake", "/airdrop"],
 		icon: EarnIcon,
 	},
 	{
 		isDivider: true,
 	},
 	{ title: "Mint", url: "/collections/mint", icon: MintIcon },
+	// {
+	//   title: "Launchpad",
+	//   url: "http://launchpad.hopers.io/",
+	//   icon: LaunchpadIcon,
+	// },
 	{
 		title: "IDO",
 		url: "/ido",
 		icon: ExploreIcon,
 		selectedUrl: ["/ido", "/ido/detail"],
 	},
-	// {
-	//   title: "Launchpad",
-	//   url: "http://launchpad.hopers.io/",
-	//   icon: LaunchpadIcon,
-	// },
 ];
 
 const SocialIcons = [

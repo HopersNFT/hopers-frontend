@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { IDOIds } from "../../constants/IDOs";
 import useIDOStatus from "../../pages/IDO/useIDOStatus";
 import { useAppSelector } from "../../app/hooks";
@@ -64,16 +64,31 @@ const HopeIcon = () => (
 
 const HopePriceDisplay: React.FC = () => {
 	const { idoStatus } = useIDOStatus(IDOIds.HOPERS);
-	const junoPrice = useAppSelector(
-		(state) => state.tokenPrices[TokenType.JUNO]
+	// const liquidities = useAppSelector((state) => state.liquidities);
+	const hopersPriceState = useAppSelector(
+		(state) => state.tokenPrices[TokenType.HOPERS]
 	);
 
-	const hopersPrice = useMemo(() => {
-		const junoPriceInUsd =
-			Number(junoPrice?.market_data?.current_price?.usd) || 0;
-		const hopersPriceInJuno = Number(idoStatus?.costs[TokenType.JUNO]) || 0;
-		return hopersPriceInJuno ? junoPriceInUsd / hopersPriceInJuno : 0;
-	}, [idoStatus, junoPrice]);
+	const hopersPrice = hopersPriceState?.market_data?.current_price?.usd || 0;
+
+	// const junoPrice = useAppSelector(
+	// 	(state) => state.tokenPrices[TokenType.JUNO]
+	// );
+
+	// const hopersJunoLiquidity = liquidities.find(
+	// 	(liquidity) =>
+	// 		liquidity.token1 === TokenType.HOPERS &&
+	// 		liquidity.token2 === TokenType.JUNO
+	// );
+
+	// const hopersPrice = useMemo(() => {
+	// 	if (!hopersJunoLiquidity) return 0;
+	// 	const junoPriceInUsd =
+	// 		Number(junoPrice?.market_data?.current_price?.usd) || 0;
+	// 	const ratio = hopersJunoLiquidity.ratio || 0;
+
+	// 	return junoPriceInUsd * ratio;
+	// }, [hopersJunoLiquidity, junoPrice?.market_data?.current_price?.usd]);
 
 	// const hopePrice = useAppSelector(
 	//   (state) => state.tokenPrices[TokenType.HOPE]
@@ -99,7 +114,7 @@ const HopePriceDisplay: React.FC = () => {
 				status={
 					idoStatus.crrState === PresaleState.BEFORE ? "IDO SCHEDULED" : ""
 				}
-			>{`${addSuffix(hopersPrice)}$`}</HopePrice>
+			>{`${addSuffix(hopersPrice, 3)}$`}</HopePrice>
 			{/* <HopePrice>{`${priceInfo.price}$`}</HopePrice>
       <PercentageChange isNegative={priceInfo.percentage < 0}>
         {`(${priceInfo.percentage}%)`}

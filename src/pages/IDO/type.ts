@@ -8,7 +8,8 @@ export enum SwapAmountType {
 export type AvailableTokenType =
 	| TokenType.JUNO
 	| TokenType.ATOM
-	| TokenType.AXELAR;
+	| TokenType.USDC
+	| TokenType.HUAHUA;
 
 export const AvailableTokens: {
 	[key in AvailableTokenType]: {
@@ -24,9 +25,13 @@ export const AvailableTokens: {
 		fieldKey: "token_cost_atom",
 		symbol: "ATOM",
 	},
-	[TokenType.AXELAR]: {
+	[TokenType.USDC]: {
 		fieldKey: "token_cost_usdc",
 		symbol: "USDC",
+	},
+	[TokenType.HUAHUA]: {
+		fieldKey: "token_cost_huhua",
+		symbol: "HUAHUA",
 	},
 };
 
