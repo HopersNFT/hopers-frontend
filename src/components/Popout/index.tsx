@@ -355,13 +355,13 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							? foreignChainConfig.microDenom
 							: swapInfo.denom,
 					amount: String(
-						Number(swapAmount) *
+						Math.floor(Number(swapAmount) *
 							Math.pow(
 								10,
 								swapInfo.swapType === SwapType.DEPOSIT
 									? 6
 									: TokenStatus[swapInfo.denom].decimal || 6
-							)
+							))
 					),
 				},
 				timeoutHeight: undefined,
