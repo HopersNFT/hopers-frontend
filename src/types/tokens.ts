@@ -6,6 +6,7 @@ export enum TokenType {
 	ATOM = "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
 	USDC = "ibc/EAC38D55372F38F1AFD68DF7FE9EF762DCF69F26520643CF3F9D292A738D8034",
 	OSMO = "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
+	KUJIRA = "ibc/7F7D3698E2E3484D576001608BB84D13F5C8B02B97359716ECC60A29A7523BF3",
 	HUAHUA = "ibc/D836B191CDAE8EDACDEBE7B64B504C5E06CC17C6A072DAF278F9A96DF66F6241",
 	HOPE = "hope",
 	NETA = "neta",
@@ -19,9 +20,9 @@ export enum TokenType {
 	AQUA = "aqua",
 	GLTO = "glto",
 	RAW = "raw",
-  DRGN = 'drgn',
-  BANANA = 'banana',
-  CZAR = 'czar'
+	DRGN = "drgn",
+	BANANA = "banana",
+	CZAR = "czar",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -48,9 +49,10 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.GLTO]: "GLTO",
 	[TokenType.AQUA]: "AQUA",
 	[TokenType.OSMO]: "OSMO",
-  [TokenType.DRGN]: 'DRGN',
-  [TokenType.BANANA]: 'BANANA',
-  [TokenType.CZAR]: 'CZAR'
+	[TokenType.DRGN]: "DRGN",
+	[TokenType.BANANA]: "BANANA",
+	[TokenType.CZAR]: "CZAR",
+	[TokenType.KUJIRA]: "KUJI",
 };
 
 export type TokenStatusType = {
@@ -61,7 +63,7 @@ export type TokenStatusType = {
 	chain: ChainTypes;
 	coinName?: string;
 	decimal?: number;
-  denom?: string;
+	denom?: string;
 };
 
 export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
@@ -103,7 +105,7 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		isIBCCoin: true,
 		chain: ChainTypes.AXELAR,
 		originChain: ChainTypes.AXELAR,
-    denom:'uusdc'
+		denom: "uusdc",
 	},
 	[TokenType.HOPERS]: {
 		isNativeCoin: false,
@@ -208,6 +210,12 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.JUNO,
 		contractAddress:
 			"juno1x02k67asfmjawgc96dj8nxq6se3fmx36gedgs5hvkjegdhfy97rs3jgj2h",
+	},
+	[TokenType.KUJIRA]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.KUJIRA,
+		originChain: ChainTypes.KUJIRA,
 	},
 };
 
