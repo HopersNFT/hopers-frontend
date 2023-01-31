@@ -99,7 +99,9 @@ const getClient = async (chainType: ChainTypes) => {
 		toast.info(`existed clients`);
 		return wasmChainClients[chainType];
 	}
-	toast.info("getting new client");
+	toast.info(
+		`getting new client, ${!!window.keplr}, ${!!window.getOfflineSignerAuto}, ${!!window.getOfflineSignerOnlyAmino}`
+	);
 	try {
 		// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 		// const { wallet, walletClient } = connectedWallet;
