@@ -47,6 +47,7 @@ export const getOfflineSigner = async (chainId: string) => {
 		if (!signer) signer = await window.keplr.getOfflineSignerAuto(chainId);
 		return signer;
 	}
+	return null;
 };
 
 const useContract = () => {
