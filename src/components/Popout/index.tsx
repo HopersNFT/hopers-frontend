@@ -287,6 +287,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			origin: ChainTypes;
 			foreign: ChainTypes;
 		}) => {
+			toast.info(`getting wallets ${origin} ${foreign}`);
 			const originResult = await getClient(origin);
 			const foreignResult = await getClient(foreign);
 
