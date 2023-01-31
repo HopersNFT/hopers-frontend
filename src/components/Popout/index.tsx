@@ -234,14 +234,19 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 
 	const getClient = useCallback(
 		async (chainType: ChainTypes) => {
+			const chainConfig = ChainConfigs[chainType];
 			if (connectedWallet) {
-				const chainConfig = ChainConfigs[chainType];
 				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
+				toast.info(
+					`getting client ${chainConfig.chainId} ${chainConfig.chainName}`
+				);
 				const { wallet, walletClient } = connectedWallet;
 				const offlineSigner = await wallet.getOfflineSignerFunction(
 					walletClient
 				)(chainConfig.chainId);
+				toast.info(`got offline signer`);
 				const account = await offlineSigner?.getAccounts();
+				toast.info("got account");
 				let wasmChainClient = null;
 				if (offlineSigner) {
 					try {
@@ -255,12 +260,16 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 									),
 								}
 							);
+						toast.info("got signing client");
 						return {
 							account: account?.[0],
 							client: wasmChainClient,
 						};
 					} catch (e) {
 						console.error("wallets", e);
+						toast.error(
+							`getting client error ${chainConfig.chainId} ${chainConfig.chainName}`
+						);
 						return { account: account?.[0], client: null };
 					}
 				}
