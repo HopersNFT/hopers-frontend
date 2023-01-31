@@ -37,7 +37,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { useWalletManager } from "@noahsaso/cosmodal";
 import ReactSelect, { ControlProps } from "react-select";
 import { addSuffix, convertStringToNumber } from "../../util/string";
-import { AccountData } from "@cosmjs/proto-signing";
+// import { AccountData } from "@cosmjs/proto-signing";
 import { toast } from "react-toastify";
 
 // import {
@@ -76,93 +76,91 @@ interface QuickSwapProps {
 	closeNewWindow: (params: any) => void;
 }
 
-type TWasmChainClients = {
-	[key in ChainTypes]: {
-		client: SigningCosmWasmClient | null;
-		account: AccountData | null;
-	};
-};
+// type TWasmChainClients = {
+// 	[key in ChainTypes]: {
+// 		client: SigningCosmWasmClient | null;
+// 		account: AccountData | null;
+// 	};
+// };
 
-let wasmChainClients: TWasmChainClients = {} as TWasmChainClients;
+// let wasmChainClients: TWasmChainClients = {} as TWasmChainClients;
 
-const getClient = async (chainType: ChainTypes) => {
-	// if (connectedWallet) {
-	const chainConfig = ChainConfigs[chainType];
-	toast.info(
-		`getting client. ${chainConfig.chainId} ${chainConfig.chainName}`
-	);
-	if (
-		wasmChainClients[chainType] &&
-		wasmChainClients[chainType].client &&
-		wasmChainClients[chainType].account
-	) {
-		toast.info(`existed clients`);
-		return wasmChainClients[chainType];
-	}
-	toast.info(
-		`getting new client, ${!!window.keplr}, ${!!window.getOfflineSignerAuto}, ${!!window.getOfflineSignerOnlyAmino}`
-	);
-	try {
-		// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
-		// const { wallet, walletClient } = connectedWallet;
-		// const offlineSigner = await wallet.getOfflineSignerFunction(
-		// 	walletClient
-		// )(chainConfig.chainId);
-		// const account = await offlineSigner?.getAccounts();
-		// console.log('debug start', chainConfig)
-		if (!!window.keplr) {
-			await window.keplr.enable(chainConfig.chainId);
-		}
-		let offlineSigner: any = null;
-		if (!!window.getOfflineSigner) {
-			offlineSigner = await window.getOfflineSigner(chainConfig.chainId);
-		}
-		if (!offlineSigner && !!window.getOfflineSignerAuto) {
-			offlineSigner = await window.getOfflineSignerAuto(
-				chainConfig.chainId
-			);
-		}
-		if (!offlineSigner && !!window.getOfflineSignerOnlyAmino) {
-			offlineSigner = await window.getOfflineSignerOnlyAmino(
-				chainConfig.chainId
-			);
-		}
-		const account = await offlineSigner.getAccounts();
-		let wasmChainClient = null;
-		if (offlineSigner) {
-			try {
-				wasmChainClient = await SigningCosmWasmClient.connectWithSigner(
-					chainConfig.rpcEndpoint,
-					offlineSigner,
-					{
-						gasPrice: GasPrice.fromString(
-							`${chainConfig.gasPrice}${chainConfig.microDenom}`
-						),
-					}
-				);
-				// console.log('debug wasmChainClient', wasmChainClient)
-				const result = {
-					account: account?.[0],
-					client: wasmChainClient,
-				};
-				wasmChainClients[chainType] = result;
-				return result;
-			} catch (e) {
-				console.error("wallets", chainConfig, e);
-				return { account: account?.[0], client: null };
-			}
-		}
-	} catch (e) {
-		console.log("debug", e);
-		toast.error(
-			`getting client error. ${chainConfig.chainId} ${
-				chainConfig.chainName
-			} ${JSON.stringify(e)}`
-		);
-	}
-	toast.info("no keplr in window");
-	return { account: null, client: null };
-};
+// const getClient = async (chainType: ChainTypes) => {
+// 	// if (connectedWallet) {
+// 	const chainConfig = ChainConfigs[chainType];
+// 	toast.info(
+// 		`getting client. ${chainConfig.chainId} ${chainConfig.chainName}`
+// 	);
+// 	if (
+// 		wasmChainClients[chainType] &&
+// 		wasmChainClients[chainType].client &&
+// 		wasmChainClients[chainType].account
+// 	) {
+// 		toast.info(`existed clients`);
+// 		return wasmChainClients[chainType];
+// 	}
+// 	toast.info("getting new client");
+// 	if (!!window.keplr && !!window.getOfflineSigner) {
+// 		try {
+// 			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
+// 			// const { wallet, walletClient } = connectedWallet;
+// 			// const offlineSigner = await wallet.getOfflineSignerFunction(
+// 			// 	walletClient
+// 			// )(chainConfig.chainId);
+// 			// const account = await offlineSigner?.getAccounts();
+// 			// console.log('debug start', chainConfig)
+// 			await window.keplr.enable(chainConfig.chainId);
+// 			let offlineSigner: any = await window.getOfflineSigner(
+// 				chainConfig.chainId
+// 			);
+// 			if (!offlineSigner && !!window.getOfflineSignerAuto) {
+// 				offlineSigner = await window.getOfflineSignerAuto(
+// 					chainConfig.chainId
+// 				);
+// 			}
+// 			if (!offlineSigner && !!window.getOfflineSignerOnlyAmino) {
+// 				offlineSigner = await window.getOfflineSignerOnlyAmino(
+// 					chainConfig.chainId
+// 				);
+// 			}
+// 			const account = await offlineSigner.getAccounts();
+// 			let wasmChainClient = null;
+// 			if (offlineSigner) {
+// 				try {
+// 					wasmChainClient =
+// 						await SigningCosmWasmClient.connectWithSigner(
+// 							chainConfig.rpcEndpoint,
+// 							offlineSigner,
+// 							{
+// 								gasPrice: GasPrice.fromString(
+// 									`${chainConfig.gasPrice}${chainConfig.microDenom}`
+// 								),
+// 							}
+// 						);
+// 					// console.log('debug wasmChainClient', wasmChainClient)
+// 					const result = {
+// 						account: account?.[0],
+// 						client: wasmChainClient,
+// 					};
+// 					wasmChainClients[chainType] = result;
+// 					return result;
+// 				} catch (e) {
+// 					console.error("wallets", chainConfig, e);
+// 					return { account: account?.[0], client: null };
+// 				}
+// 			}
+// 		} catch (e) {
+// 			console.log("debug", e);
+// 			toast.error(
+// 				`getting client error. ${chainConfig.chainId} ${
+// 					chainConfig.chainName
+// 				} ${JSON.stringify(e)}`
+// 			);
+// 		}
+// 	}
+// 	toast.info("no keplr in window");
+// 	return { account: null, client: null };
+// };
 
 const OutLinkIcon = ({ ...props }) => (
 	<svg
@@ -234,6 +232,44 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const { getTokenBalances } = useFetch();
 	const { connectedWallet } = useWalletManager();
 
+	const getClient = useCallback(
+		async (chainType: ChainTypes) => {
+			if (connectedWallet) {
+				const chainConfig = ChainConfigs[chainType];
+				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
+				const { wallet, walletClient } = connectedWallet;
+				const offlineSigner = await wallet.getOfflineSignerFunction(
+					walletClient
+				)(chainConfig.chainId);
+				const account = await offlineSigner?.getAccounts();
+				let wasmChainClient = null;
+				if (offlineSigner) {
+					try {
+						wasmChainClient =
+							await SigningCosmWasmClient.connectWithSigner(
+								chainConfig.rpcEndpoint,
+								offlineSigner,
+								{
+									gasPrice: GasPrice.fromString(
+										`${chainConfig.gasPrice}${chainConfig.microDenom}`
+									),
+								}
+							);
+						return {
+							account: account?.[0],
+							client: wasmChainClient,
+						};
+					} catch (e) {
+						console.error("wallets", e);
+						return { account: account?.[0], client: null };
+					}
+				}
+			}
+			return { account: null, client: null };
+		},
+		[connectedWallet]
+	);
+
 	const getWallets = useCallback(
 		async ({
 			origin,
@@ -247,7 +283,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 
 			return { origin: originResult, foreign: foreignResult };
 		},
-		[]
+		[getClient]
 	);
 
 	useEffect(() => {
