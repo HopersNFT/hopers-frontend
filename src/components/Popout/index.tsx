@@ -86,16 +86,21 @@ let wasmChainClients: TWasmChainClients = {} as TWasmChainClients;
 
 const getClient = async (chainType: ChainTypes) => {
 	// if (connectedWallet) {
+	const chainConfig = ChainConfigs[chainType];
+	// toast.info(
+	// 	`getting client. ${chainConfig.chainId} ${chainConfig.chainName}`
+	// );
 	if (
 		wasmChainClients[chainType] &&
 		wasmChainClients[chainType].client &&
 		wasmChainClients[chainType].account
 	) {
+		// toast.info(`existed clients`);
 		return wasmChainClients[chainType];
 	}
-	if (!!window.keplr && !!window.getOfflineSigner) {
+	// toast.info("getting new client");
+	if (!!window.keplr) {
 		try {
-			const chainConfig = ChainConfigs[chainType];
 			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 			// const { wallet, walletClient } = connectedWallet;
 			// const offlineSigner = await wallet.getOfflineSignerFunction(
@@ -104,9 +109,12 @@ const getClient = async (chainType: ChainTypes) => {
 			// const account = await offlineSigner?.getAccounts();
 			// console.log('debug start', chainConfig)
 			await window.keplr.enable(chainConfig.chainId);
-			let offlineSigner: any = await window.getOfflineSigner(
-				chainConfig.chainId
-			);
+			let offlineSigner: any = null;
+			if (!!window.getOfflineSigner) {
+				offlineSigner = await window.getOfflineSigner(
+					chainConfig.chainId
+				);
+			}
 			if (!offlineSigner && !!window.getOfflineSignerAuto) {
 				offlineSigner = await window.getOfflineSignerAuto(
 					chainConfig.chainId
@@ -145,8 +153,14 @@ const getClient = async (chainType: ChainTypes) => {
 			}
 		} catch (e) {
 			console.log("debug", e);
+			// toast.error(
+			// 	`getting client error. ${chainConfig.chainId} ${
+			// 		chainConfig.chainName
+			// 	} ${JSON.stringify(e)}`
+			// );
 		}
 	}
+	// toast.info("no keplr in window");
 	return { account: null, client: null };
 };
 
@@ -208,6 +222,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		SelectOptions[0].value
 	);
 	const [errMsg, setErrorMsg] = useState("");
+	const [statusMsg, setStatusMsg] = useState("");
 	// const [hasErrorOnMobileConnection, setHasErrorOnMobileConnection] =
 	// 	useState(false);
 	const [ibcNativeTokenBalance, setIBCNativeTokenBalance] = useState<{
@@ -309,12 +324,15 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		) {
 			setErrMsg(
 				`Amount should be smaller than ${
-					balances[swapInfo.denom].amount
+					balances[swapInfo.denom].amount /
+					Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6)
 				}`
 			);
 			return;
 		}
 		setSendingTx(true);
+		setStatusMsg("starting transfer. getting clients...");
+		// toast.info("starting transfer. getting clients...");
 		const wallets = await getWallets(swapInfo.swapChains);
 
 		const foreignChainConfig = ChainConfigs[swapInfo.swapChains.foreign];
@@ -325,6 +343,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			: undefined;
 
 		if (!wallets.origin || !wallets.foreign) {
+			setErrMsg("getting clients failed.");
+			setStatusMsg("");
 			setSendingTx(false);
 			return;
 		}
@@ -336,6 +356,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 
 		const client = wallets.foreign.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
+			setStatusMsg("balance checking...");
+			// toast.info("balance checking...");
 			try {
 				let balanceWithoutFee = Number(
 					ibcNativeTokenBalance[swapInfo.denom].amount
@@ -344,17 +366,21 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					isNaN(Number(ibcNativeTokenBalance[swapInfo.denom]?.amount))
 				) {
 					setErrMsg("Can't fetch balance.");
+					setStatusMsg("");
 					setSendingTx(false);
 					return;
 				}
 				balanceWithoutFee = balanceWithoutFee / 1e6 - 0.025;
 				if (balanceWithoutFee < amount) {
 					setErrMsg("Not enough balance!");
+					setStatusMsg("");
 					setSendingTx(false);
 					return;
 				}
 			} catch (e) {
 				console.log("debug balance check error", e);
+				setErrMsg("error occured during balance checking.");
+				setStatusMsg("");
 				setSendingTx(false);
 			}
 		}
@@ -424,6 +450,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			}),
 		});
 		if (senderAddress && client) {
+			setStatusMsg("executing transaction...");
+			// toast.info("executing transaction...");
 			try {
 				const tx = await client.signAndBroadcast(
 					senderAddress,
@@ -433,12 +461,16 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				);
 				await getTokenBalances();
 				closeNewWindow(true);
+				setStatusMsg("");
 				console.log("popout transaction successfully", tx);
 			} catch (e) {
 				console.error("debug popout transaction error", e);
+				setErrorMsg("error occured during transaction");
+				setStatusMsg("");
 				setSendingTx(false);
 			}
 		} else {
+			setStatusMsg("");
 			setSendingTx(false);
 		}
 	};
@@ -720,7 +752,12 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							value={swapAmount}
 						/>
 					</div>
-					<div className="err-msg-container">{errMsg}</div>
+					<div
+						className="err-msg-container"
+						style={{ color: statusMsg ? "black" : "red" }}
+					>
+						{statusMsg || errMsg}
+					</div>
 					<div className="operation-button-container">
 						<div
 							className="operation-button"
