@@ -42,6 +42,14 @@ export const Liquidities: TLiquidity[] = [
 	},
 	{
 		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.KUJIRA,
+		contractAddress:
+			"juno17qgx8l84zzrdgydrnl9t2ucu8evuslaakpw8lz85fraryjylef7qgfm6sp",
+		stakingAddress:
+			"juno1p0350chclgpy26jzmf6eafmtre8kefaawss26mh622heqvjcwwrqfyny3z",
+	},
+	{
+		tokenA: TokenType.HOPERS,
 		tokenB: TokenType.HUAHUA,
 		contractAddress:
 			"juno162xnar9ndm7e66dzc2tzt2rx495v9ey0xw3zkjqur36dghqd600s0e3mzz",
@@ -115,8 +123,10 @@ export const Liquidities: TLiquidity[] = [
 		tokenB: TokenType.CANLAB,
 		contractAddress:
 			"juno1f6hyczl2yn6gwrh0yqwr0mjpzqywcy5p80ntn40cn7ha0etqtl3qs6xfv3",
-		stakingAddress:
+		stakingAddress: [
 			"juno1ll35ncyf6vmenh2yvsh3ut9lj7kkrcgssxza3jpr60l80qt7c26skawpeg",
+			"juno1pf3h950yfhnsny5mf9ssha99ugjxqc2f45r0v4vtqpenv68dplwqcnn66n",
+		],
 	},
 	{
 		tokenA: TokenType.HOPERS,
@@ -144,6 +154,28 @@ export const Liquidities: TLiquidity[] = [
 		// stakingAddress:
 		// 	"juno1u7ty7jqqzxapkrxydd7jergetd0dpyfnr7mh240aq2dducxkymhsdd4w4d",
 	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.DRGN,
+		contractAddress:
+			"juno1anhnfk68epxhj59s3qghv9duudkulkyjthqz8x08d0nm289y8y2svrcchc",
+		stakingAddress:
+			"juno1usurxj0urs7ja7mt34hjk9rf48gfp8akpuwlck4yad7t60nhpyls24kh9t",
+	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.BANANA,
+		contractAddress:
+			"juno1slsy2j7u7hq2l02yasczamy40d6n7qv7n4mtpwddx9cmsrf0lv2sywpweh",
+		stakingAddress:
+			"juno1l5m5avwhml7n0sq9h5lpt9l3wzg6khmtr9c0pe9879ukupt5avaq6r4hhd",
+	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.CZAR,
+		contractAddress:
+			"juno1qxajeku5f0qxyl2vcush475r62um20v7aqzhvr0sgv2m00ela9qsw5sn85",
+	},
 ];
 
 export const getLiquiditiesByTokens = (
@@ -151,5 +183,6 @@ export const getLiquiditiesByTokens = (
 	tokenB: TokenType
 ): TLiquidity | null =>
 	Liquidities.find(
-		(liquidity) => liquidity.tokenA === tokenA && liquidity.tokenB === tokenB
+		(liquidity) =>
+			liquidity.tokenA === tokenA && liquidity.tokenB === tokenB
 	) || null;
