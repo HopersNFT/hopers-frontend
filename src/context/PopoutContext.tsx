@@ -66,7 +66,7 @@ const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
 	}, []);
 
 	useEffect(() => {
-		console.log("debug here");
+		console.log("debug here", window, newWindow);
 		copyStyles(window.document, newWindow.current.document);
 	}, [refresh]);
 
