@@ -62,6 +62,10 @@ const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
 
 	useEffect(() => {
 		setInterval(() => {
+			console.log(
+				"debug window.styleSheets length",
+				(window as any)?.styleSheets?.length || null
+			);
 			setRefresh((prev) => (prev > 100 ? prev : prev + 1));
 		}, 100);
 	}, []);
