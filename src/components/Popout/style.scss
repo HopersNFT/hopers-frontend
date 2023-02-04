@@ -41,6 +41,13 @@
 			padding: 30px 20px;
 			width: 100%;
 			box-sizing: border-box;
+			& > div {
+				position: relative;
+				box-sizing: border-box;
+				border: 1px solid #02e296;
+				border-radius: 5px;
+				width: 100%;
+			}
 		}
 
 		.amount-inputer-wrapper {
