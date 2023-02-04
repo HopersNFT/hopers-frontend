@@ -24,7 +24,6 @@ interface RenderInWindowProps {
 }
 
 const copyStyles = (src: any, dest: any) => {
-	console.log("debug here", src.styleSheets, dest);
 	Array.from(src.styleSheets).forEach((styleSheet: any) => {
 		const styleElement = styleSheet.ownerNode.cloneNode(true);
 		styleElement.href = styleSheet.href;
@@ -70,11 +69,6 @@ const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
 		const copyStyles = () => {
 			const src: any = window.document;
 			const dest: any = newWindow.current.document;
-			console.log(
-				"debug here",
-				src.styleSheets,
-				Array.from(src.styleSheets)
-			);
 			Array.from(src.styleSheets).forEach((styleSheet: any) => {
 				const styleElement = styleSheet.ownerNode.cloneNode(true);
 				styleElement.href = styleSheet.href;
