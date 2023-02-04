@@ -64,7 +64,7 @@ const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
 		setInterval(() => {
 			console.log(
 				"debug window.styleSheets length",
-				(window as any)?.styleSheets?.length || null
+				Array.from((window as any)?.styleSheets).length
 			);
 			setRefresh((prev) => (prev > 100 ? prev : prev + 1));
 		}, 100);
