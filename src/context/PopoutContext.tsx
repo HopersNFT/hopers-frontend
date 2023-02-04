@@ -66,17 +66,7 @@ const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
 	}, []);
 
 	useEffect(() => {
-		const copyStyles = () => {
-			const src: any = window.document;
-			const dest: any = newWindow.current.document;
-			Array.from(src.styleSheets).forEach((styleSheet: any) => {
-				const styleElement = styleSheet.ownerNode.cloneNode(true);
-				styleElement.href = styleSheet.href;
-				dest.head.appendChild(styleElement);
-			});
-			Array.from(src.fonts).forEach((font) => dest.fonts.add(font));
-		};
-		copyStyles();
+		copyStyles(window.document, newWindow.current.document);
 	}, [refresh]);
 
 	// useEffect(() => {
