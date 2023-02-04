@@ -62,10 +62,6 @@ const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
 
 	useEffect(() => {
 		setInterval(() => {
-			console.log(
-				"debug window.styleSheets length",
-				Array.from((window as any)?.styleSheets).length
-			);
 			setRefresh((prev) => (prev > 100 ? prev : prev + 1));
 		}, 100);
 	}, []);
@@ -74,7 +70,11 @@ const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
 		const copyStyles = () => {
 			const src: any = window.document;
 			const dest: any = newWindow.current.document;
-			console.log("debug here", src.styleSheets, dest);
+			console.log(
+				"debug here",
+				src.styleSheets,
+				Array.from(src.styleSheets)
+			);
 			Array.from(src.styleSheets).forEach((styleSheet: any) => {
 				const styleElement = styleSheet.ownerNode.cloneNode(true);
 				styleElement.href = styleSheet.href;
