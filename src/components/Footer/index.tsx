@@ -16,14 +16,14 @@ import {
 	DiscordIcon,
 	MediumIcon,
 	TwitterIcon,
-	TelegramIcon,
+	TelegramIcon
 } from "../SvgIcons";
 import Text from "../Text";
 import {
 	DiscordLink,
 	MediumLink,
 	TwitterLink,
-	TelegramLink,
+	TelegramLink
 } from "../../constants/SocialLinks";
 
 import {
