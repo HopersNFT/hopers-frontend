@@ -16,14 +16,12 @@ import {
 	DiscordIcon,
 	MediumIcon,
 	TwitterIcon,
-	TelegramIcon
 } from "../SvgIcons";
 import Text from "../Text";
 import {
 	DiscordLink,
 	MediumLink,
 	TwitterLink,
-	TelegramLink
 } from "../../constants/SocialLinks";
 
 import {
@@ -52,10 +50,6 @@ const SocialIcons = [
 		link: DiscordLink,
 	},
 	{ Icon: MediumIcon, link: MediumLink },
-	{ 	
-		Icon: TelegramIcon, 
-		link: TelegramLink 
-	}
 	// { Icon: TempleIcon, link: "" },
 	// { Icon: BookIcon, link: "" },
 ];
