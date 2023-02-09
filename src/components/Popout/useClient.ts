@@ -6,6 +6,7 @@ import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
 import { toast } from "react-toastify";
+import { getKeplr } from "../../features/accounts/useKeplr";
 
 const useClient = (tokens?: TokenType[]) => {
 	const { connectedWallet } = useWalletManager();
@@ -44,11 +45,12 @@ const useClient = (tokens?: TokenType[]) => {
 						toast.info(`got account ${chainType} ${!!account}`);
 					}
 				} catch (e: any) {
+					const keplr = await getKeplr();
 					if (chainType === ChainTypes.MARS) {
 						toast.error(
 							`got account ${chainType} ${JSON.stringify(
 								e.message
-							)} ${!!window.keplr}`
+							)} ${!!keplr}`
 						);
 					}
 				}
