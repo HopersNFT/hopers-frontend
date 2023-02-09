@@ -33,14 +33,17 @@ const useClient = (tokens?: TokenType[]) => {
 					);
 				}
 				try {
+					if (chainType === ChainTypes.MARS) {
+						toast.info(`got account ${chainType} `);
+					}
 					const account = await offlineSigner?.getAccounts();
 					if (chainType === ChainTypes.MARS) {
-						toast.info(`getting account ${chainType} ${!!account}`);
+						toast.info(`got account ${chainType} ${!!account}`);
 					}
 				} catch (e: any) {
 					if (chainType === ChainTypes.MARS) {
 						toast.error(
-							`getting account ${chainType} ${JSON.stringify(
+							`got account ${chainType} ${JSON.stringify(
 								e.message
 							)}`
 						);
