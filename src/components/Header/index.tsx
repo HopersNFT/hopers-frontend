@@ -49,7 +49,6 @@ import {
 	Wrapper,
 } from "./styled";
 import { coin } from "@cosmjs/proto-signing";
-import useRefresh from "../../hook/useRefresh";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import ToggleThemeButton from "../ToogleThemeButton";
 import {
@@ -186,12 +185,10 @@ const Header: React.FC = () => {
 	const { pathname } = useLocation();
 	const history = useHistory();
 	// const { initContracts } = useContract();
-	const { refresh } = useRefresh();
 
 	const { isMobile } = useWindowSize(900);
 
 	useEffect(() => {
-		refresh();
 		// initContracts();
 		return () => {
 			dispatch(setKeplrAccount());
@@ -224,7 +221,7 @@ const Header: React.FC = () => {
 				})
 			);
 		}
-	}, [connectedWallet, dispatch, config, refresh]);
+	}, [connectedWallet, dispatch, config]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	// useEffect(() => {
@@ -237,7 +234,10 @@ const Header: React.FC = () => {
 	const clickWalletButton = (walletType: WalletType | null) => {
 		if (!account) {
 			if (!walletType) return;
-			localStorage.setItem(ConnectedWalletTypeLocalStorageKey, walletType);
+			localStorage.setItem(
+				ConnectedWalletTypeLocalStorageKey,
+				walletType
+			);
 			if (walletType === WalletType.KEPLR) {
 				connectKeplr();
 			} else if (walletType === WalletType.COSMOSTATION) {
@@ -321,7 +321,11 @@ const Header: React.FC = () => {
 							Choose Wallet Type
 						</Text>
 						<Container>
-							<WalletItem onClick={() => clickWalletButton(WalletType.KEPLR)}>
+							<WalletItem
+								onClick={() =>
+									clickWalletButton(WalletType.KEPLR)
+								}
+							>
 								<WalletImage
 									src="/wallet-images/keplr-wallet-extension.png"
 									alt=""
@@ -331,7 +335,9 @@ const Header: React.FC = () => {
 								</Text>
 							</WalletItem>
 							<WalletItem
-								onClick={() => clickWalletButton(WalletType.COSMOSTATION)}
+								onClick={() =>
+									clickWalletButton(WalletType.COSMOSTATION)
+								}
 							>
 								<WalletImage
 									src="/wallet-images/cosmostation-wallet-extension.png"
@@ -382,33 +388,64 @@ const Header: React.FC = () => {
 										<>
 											<MenuItem
 												key={linkIndex}
-												onClick={() => handleClickMenuItem(linkItem)}
+												onClick={() =>
+													handleClickMenuItem(
+														linkItem
+													)
+												}
 											>
 												{linkItem.icon && (
-													<linkItem.icon width={20} height={20} />
+													<linkItem.icon
+														width={20}
+														height={20}
+													/>
 												)}
 												{linkItem.title}
 											</MenuItem>
-											{linkItem.children && linkItem.children.length > 0 && (
-												<SubMenuContainer
-													expanded={openedSubMenu[linkItem.title]}
-													loaded={!!mobileMenuContainer?.current}
-												>
-													{linkItem.children.map(
-														(subLinkItem, subLinkIndex) => (
-															<MenuItem
-																key={`${linkIndex}-${subLinkIndex}`}
-																onClick={() => handleClickMenuItem(subLinkItem)}
-															>
-																{subLinkItem.icon && (
-																	<subLinkItem.icon width={20} height={20} />
-																)}
-																{subLinkItem.title}
-															</MenuItem>
-														)
-													)}
-												</SubMenuContainer>
-											)}
+											{linkItem.children &&
+												linkItem.children.length >
+													0 && (
+													<SubMenuContainer
+														expanded={
+															openedSubMenu[
+																linkItem.title
+															]
+														}
+														loaded={
+															!!mobileMenuContainer?.current
+														}
+													>
+														{linkItem.children.map(
+															(
+																subLinkItem,
+																subLinkIndex
+															) => (
+																<MenuItem
+																	key={`${linkIndex}-${subLinkIndex}`}
+																	onClick={() =>
+																		handleClickMenuItem(
+																			subLinkItem
+																		)
+																	}
+																>
+																	{subLinkItem.icon && (
+																		<subLinkItem.icon
+																			width={
+																				20
+																			}
+																			height={
+																				20
+																			}
+																		/>
+																	)}
+																	{
+																		subLinkItem.title
+																	}
+																</MenuItem>
+															)
+														)}
+													</SubMenuContainer>
+												)}
 										</>
 									)
 								)}
@@ -424,7 +461,9 @@ const Header: React.FC = () => {
 										<MenuFooterLinkItem
 											style={icon.style ?? {}}
 											key={index}
-											onClick={() => openNewUrl(icon.link)}
+											onClick={() =>
+												openNewUrl(icon.link)
+											}
 										>
 											{icon.Icon}
 										</MenuFooterLinkItem>
@@ -442,12 +481,18 @@ const Header: React.FC = () => {
 								) : (
 									<LinkButton
 										key={linkIndex}
-										onClick={() => handleClickLink(linkItem.url || "/")}
+										onClick={() =>
+											handleClickLink(linkItem.url || "/")
+										}
 										selected={
-											linkItem.selectedUrl && linkItem.selectedUrl.length > 0
+											linkItem.selectedUrl &&
+											linkItem.selectedUrl.length > 0
 												? !!linkItem.selectedUrl.reduce(
 														(result, crrItem) =>
-															result || pathname.includes(crrItem),
+															result ||
+															pathname.includes(
+																crrItem
+															),
 														false
 												  )
 												: pathname === linkItem.url
@@ -460,9 +505,16 @@ const Header: React.FC = () => {
 						</LinkContainer>
 						<LinkContainer>
 							<HopePriceDisplay />
-							<div style={{ display: "flex", alignItems: "center" }}>
+							<div
+								style={{
+									display: "flex",
+									alignItems: "center",
+								}}
+							>
 								{/* <ProfileIcon onClick={() => handleClickLink("/profile")} /> */}
-								<ProfileIcon onClick={() => handleClickLink("/profile")}>
+								<ProfileIcon
+									onClick={() => handleClickLink("/profile")}
+								>
 									<HopersUserIcon />
 								</ProfileIcon>
 								<ToggleThemeButton />

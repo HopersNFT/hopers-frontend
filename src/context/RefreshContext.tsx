@@ -1,67 +1,148 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
-const REFRESH_INTERVAL = 1000 * 10;
-const FETCH_PRICE_INTERVAL = 60 * 60 * 1000;
+const REFRESH_NFT_INTERVAL = 1000 * 10;
+const REFRESH_PRICE_INTERVAL = 1000 * 10;
+const REFRESH_CACHE_INTERVAL = 1000 * 60 * 30;
+const REFRESH_LIQUIDITY_INTERVAL = 1000 * 10;
+const REFRESH_BALANCES_INTERVAL = 1000 * 10;
 
 const RefreshContext = React.createContext({
-  value: 0,
-  price: 0,
-  refreshAll: () => {},
+	nft: 0,
+	price: 0,
+	cache: 0,
+	liquidity: 0,
+	balances: 0,
+	refreshNft: () => {},
+	refreshPrice: () => {},
+	refreshCache: () => {},
+	refreshLiquidity: () => {},
+	refreshBalances: () => {},
 });
 
 // Check if the tab is active in the user browser
 const useIsBrowserTabActive = () => {
-  const isBrowserTabActiveRef = useRef(true);
+	const isBrowserTabActiveRef = useRef(true);
 
-  useEffect(() => {
-    const onVisibilityChange = () => {
-      isBrowserTabActiveRef.current = !document.hidden;
-    };
+	useEffect(() => {
+		const onVisibilityChange = () => {
+			isBrowserTabActiveRef.current = !document.hidden;
+		};
 
-    window.addEventListener("visibilitychange", onVisibilityChange);
+		window.addEventListener("visibilitychange", onVisibilityChange);
 
-    return () => {
-      window.removeEventListener("visibilitychange", onVisibilityChange);
-    };
-  }, []);
+		return () => {
+			window.removeEventListener("visibilitychange", onVisibilityChange);
+		};
+	}, []);
 
-  return isBrowserTabActiveRef;
+	return isBrowserTabActiveRef;
 };
 
 // This context maintain 2 counters that can be used as a dependencies on other hooks to force a periodic refresh
 const RefreshContextProvider = ({ children }: { children: any }) => {
-  const [value, setValue] = useState(0);
-  const [priceValue, setPriceValue] = useState(0);
-  const isBrowserTabActiveRef = useIsBrowserTabActive();
+	console.log("--------RefreshContextProvider render--------");
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      if (isBrowserTabActiveRef.current) {
-        setValue((prev) => prev + 1);
-      }
-    }, REFRESH_INTERVAL);
-    return () => clearInterval(interval);
-  }, [isBrowserTabActiveRef]);
+	const [nftValue, setNftValue] = useState(0);
+	const [priceValue, setPriceValue] = useState(0);
+	const [cacheValue, setCacheValue] = useState(0);
+	const [liquidityValue, setLiquidityValue] = useState(0);
+	const [balancesValue, setBalancesValue] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      if (isBrowserTabActiveRef.current) {
-        setPriceValue((prev) => prev + 1);
-      }
-    }, FETCH_PRICE_INTERVAL);
-    return () => clearInterval(interval);
-  }, [isBrowserTabActiveRef]);
+	const isBrowserTabActiveRef = useIsBrowserTabActive();
 
-  const refreshAll = useCallback(() => {
-    setValue((prev) => prev + 1);
-    setPriceValue((prev) => prev + 1);
-  }, []);
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (isBrowserTabActiveRef.current) {
+				console.log("--------REFRESH_NFT_INTERVAL--------");
+				setNftValue((prev) => prev + 1);
+			}
+		}, REFRESH_NFT_INTERVAL);
+		return () => clearInterval(interval);
+	}, [isBrowserTabActiveRef]);
 
-  return (
-    <RefreshContext.Provider value={{ value, price: priceValue, refreshAll }}>
-      {children}
-    </RefreshContext.Provider>
-  );
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (isBrowserTabActiveRef.current) {
+				console.log("--------REFRESH_PRICE_INTERVAL--------");
+				setPriceValue((prev) => prev + 1);
+			}
+		}, REFRESH_PRICE_INTERVAL);
+		return () => clearInterval(interval);
+	}, [isBrowserTabActiveRef]);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (isBrowserTabActiveRef.current) {
+				console.log("--------REFRESH_CACHE_INTERVAL--------");
+				setCacheValue((prev) => prev + 1);
+			}
+		}, REFRESH_CACHE_INTERVAL);
+		return () => clearInterval(interval);
+	}, [isBrowserTabActiveRef]);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (isBrowserTabActiveRef.current) {
+				console.log("--------REFRESH_LIQUIDITY_INTERVAL--------");
+				setLiquidityValue((prev) => prev + 1);
+			}
+		}, REFRESH_LIQUIDITY_INTERVAL);
+		return () => clearInterval(interval);
+	}, [isBrowserTabActiveRef]);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (isBrowserTabActiveRef.current) {
+				console.log("--------REFRESH_BALANCES_INTERVAL--------");
+				setBalancesValue((prev) => prev + 1);
+			}
+		}, REFRESH_BALANCES_INTERVAL);
+		return () => clearInterval(interval);
+	}, [isBrowserTabActiveRef]);
+
+	const refreshNft = useCallback(() => {
+		console.log("--------refreshNft--------");
+		setNftValue((prev) => prev + 1);
+	}, []);
+
+	const refreshPrice = useCallback(() => {
+		console.log("--------refreshPrice--------");
+		setPriceValue((prev) => prev + 1);
+	}, []);
+
+	const refreshCache = useCallback(() => {
+		console.log("--------refreshCache--------");
+		setCacheValue((prev) => prev + 1);
+	}, []);
+
+	const refreshLiquidity = useCallback(() => {
+		console.log("--------refreshLiquidity--------");
+		setLiquidityValue((prev) => prev + 1);
+	}, []);
+
+	const refreshBalances = useCallback(() => {
+		console.log("--------refreshBalances--------");
+		setBalancesValue((prev) => prev + 1);
+	}, []);
+
+	return (
+		<RefreshContext.Provider
+			value={{
+				nft: nftValue,
+				price: priceValue,
+				cache: cacheValue,
+				liquidity: liquidityValue,
+				balances: balancesValue,
+				refreshNft,
+				refreshPrice,
+				refreshCache,
+				refreshLiquidity,
+				refreshBalances,
+			}}
+		>
+			{children}
+		</RefreshContext.Provider>
+	);
 };
 
 export { RefreshContext, RefreshContextProvider };
