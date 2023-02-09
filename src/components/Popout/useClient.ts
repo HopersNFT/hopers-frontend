@@ -32,11 +32,14 @@ const useClient = (tokens?: TokenType[]) => {
 						`got offline signer ${chainType} ${!!offlineSigner}`
 					);
 				}
+
+				let account = null;
+
 				try {
 					if (chainType === ChainTypes.MARS) {
 						toast.info(`got account ${chainType} `);
 					}
-					const account = await offlineSigner?.getAccounts();
+					account = await offlineSigner?.getAccounts();
 					if (chainType === ChainTypes.MARS) {
 						toast.info(`got account ${chainType} ${!!account}`);
 					}
@@ -45,11 +48,10 @@ const useClient = (tokens?: TokenType[]) => {
 						toast.error(
 							`got account ${chainType} ${JSON.stringify(
 								e.message
-							)}`
+							)} ${!!window.keplr}`
 						);
 					}
 				}
-				const account = await offlineSigner?.getAccounts();
 
 				let wasmChainClient = null;
 				if (offlineSigner) {
@@ -66,12 +68,12 @@ const useClient = (tokens?: TokenType[]) => {
 								}
 							);
 						return {
-							account: account?.[0],
+							account: account?.[0] || null,
 							client: wasmChainClient,
 						};
 					} catch (e) {
 						console.error("wallets", e);
-						return { account: account?.[0], client: null };
+						return { account: account?.[0] || null, client: null };
 					}
 				}
 			}
