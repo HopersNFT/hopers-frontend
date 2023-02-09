@@ -45,7 +45,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 		CosmostationWalletContext
 	);
 	const { runExecute } = useContract();
-	const { refreshPrice } = useRefresh();
+	const { refresh } = useRefresh();
 	const history = useHistory();
 	const { suggestToken } = useKeplr();
 
@@ -134,7 +134,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 				withdraw: {},
 			});
 			toast.success("Successfully claimed!");
-			refreshPrice();
+			refresh();
 		} catch (err) {
 			console.log(err);
 			toast.error("Claim Failed!");

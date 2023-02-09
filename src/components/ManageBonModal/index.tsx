@@ -62,7 +62,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 
 	const account = useAppSelector((state) => state?.accounts?.keplrAccount);
 	const { runExecute, runQuery } = useContract();
-	const { refreshPrice } = useRefresh();
+	const { refresh } = useRefresh();
 
 	useEffect(() => {
 		const stakingAddress = liquidity.stakingAddress;
@@ -217,7 +217,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 				},
 			});
 			toast.success("Successfully bonded!");
-			refreshPrice();
+			refresh();
 		} catch (err) {
 			console.log(err);
 			toast.error("Bond Failed!");
@@ -241,7 +241,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 				},
 			});
 			toast.success("Successfully unbonded!");
-			refreshPrice();
+			refresh();
 		} catch (err) {
 			console.log(err);
 			toast.error("Unbond Failed!");
@@ -272,7 +272,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 				toast.error("Redeem Failed!");
 			})
 			.finally(() => {
-				refreshPrice();
+				refresh();
 				setIsPendingRedeem(false);
 			});
 	};

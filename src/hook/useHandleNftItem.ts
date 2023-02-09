@@ -25,7 +25,7 @@ import useRefresh from "./useRefresh";
 
 const useHandleNftItem = () => {
 	const { runExecute } = useContract();
-	const { refreshNft } = useRefresh();
+	const { refresh } = useRefresh();
 	const history = useHistory();
 	const popoutQuickSwap = usePopoutQuickSwap();
 	const { pickNFTByTokenId } = usePickNFT();
@@ -83,13 +83,13 @@ const useHandleNftItem = () => {
 			try {
 				await runExecute(nftContract, message);
 				toast.success("Success!");
-				refreshNft();
+				refresh();
 			} catch (err) {
 				console.error(err);
 				toast.error("Fail!");
 			}
 		},
-		[runExecute, refreshNft]
+		[runExecute, refresh]
 	);
 
 	const withdrawNft = useCallback(
@@ -118,13 +118,13 @@ const useHandleNftItem = () => {
 			try {
 				await runExecute(item.contractAddress, message);
 				toast.success("Success!");
-				refreshNft();
+				refresh();
 			} catch (err) {
 				console.error("withdraw error", item, message, err);
 				toast.error("Fail!");
 			}
 		},
-		[runExecute, refreshNft]
+		[runExecute, refresh]
 	);
 
 	const makeOfferToNft = useCallback(
@@ -184,14 +184,14 @@ const useHandleNftItem = () => {
 					);
 				}
 				toast.success("Make offer successfully!");
-				refreshNft();
+				refresh();
 			} catch (err: any) {
 				const errMsg = err.message;
 				console.error(err, errMsg, typeof errMsg);
 				toast.error(`Fail! ${errMsg}`);
 			}
 		},
-		[refreshNft, runExecute]
+		[refresh, runExecute]
 	);
 
 	const makeOfferToCollection = useCallback(
@@ -254,14 +254,14 @@ const useHandleNftItem = () => {
 					);
 				}
 				toast.success("Make offer successfully!");
-				refreshNft();
+				refresh();
 			} catch (err: any) {
 				const errMsg = err.message;
 				console.error(err, errMsg, typeof errMsg);
 				toast.error(`Fail! ${errMsg}`);
 			}
 		},
-		[refreshNft, runExecute]
+		[refresh, runExecute]
 	);
 
 	const mainLogic = useCallback(
@@ -333,14 +333,14 @@ const useHandleNftItem = () => {
 					);
 				}
 				showBuySuccessToast(item, ToastType.BUY);
-				refreshNft();
+				refresh();
 			} catch (err: any) {
 				const errMsg = err.message;
 				console.error(err, errMsg, typeof errMsg);
 				toast.error(`Fail! ${errMsg}`);
 			}
 		},
-		[refreshNft, runExecute]
+		[refresh, runExecute]
 	);
 
 	const buyNft = useCallback(
@@ -441,13 +441,13 @@ const useHandleNftItem = () => {
 			try {
 				await runExecute(selectedNFT.contractAddress, message);
 				toast.success("Accept bid successfully!");
-				refreshNft();
+				refresh();
 				history.goBack();
 			} catch (e) {
 				toast.error("Accept bid failed!");
 			}
 		},
-		[history, pickNFTByTokenId, refreshNft, runExecute]
+		[history, pickNFTByTokenId, refresh, runExecute]
 	);
 
 	const withdrawBid = useCallback(
@@ -478,12 +478,12 @@ const useHandleNftItem = () => {
 					message
 				);
 				toast.success("Withdraw bid successfully!");
-				refreshNft();
+				refresh();
 			} catch (e) {
 				toast.error("Withdraw bid failed!");
 			}
 		},
-		[pickNFTByTokenId, refreshNft, runExecute]
+		[pickNFTByTokenId, refresh, runExecute]
 	);
 
 	return {
