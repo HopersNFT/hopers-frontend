@@ -242,7 +242,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const {
 		clients,
 		ibcBalance: ibcNativeTokenBalance,
-		// getClient,
+		getClient,
 	} = useClient(SelectOptions.map((option) => option.value));
 
 	// const getWallets = useCallback(
@@ -364,20 +364,20 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const timeoutTimestampNanoseconds =
 			Long.fromNumber(timeout).multiply(1_000_000_000);
 
-		// if (!wallets.origin || !wallets.foreign) {
-		// 	setErrMsg("getting clients failed.");
-		// 	setStatusMsg("");
-		// 	setSendingTx(false);
-		// 	if (!wallets.origin) {
-		// 		wallets.origin = await getClient(swapInfo.swapChains.origin);
-		// 	}
-		// 	if (!wallets.foreign) {
-		// 		wallets.foreign = await getClient(swapInfo.swapChains.foreign);
-		// 	}
-		// 	if (!wallets.origin || !wallets.foreign) {
-		// 		return;
-		// 	}
-		// }
+		if (!wallets.origin || !wallets.foreign) {
+			setErrMsg("getting clients failed.");
+			setStatusMsg("");
+			setSendingTx(false);
+			if (!wallets.origin) {
+				wallets.origin = await getClient(swapInfo.swapChains.origin);
+			}
+			if (!wallets.foreign) {
+				wallets.foreign = await getClient(swapInfo.swapChains.foreign);
+			}
+			if (!wallets.origin || !wallets.foreign) {
+				return;
+			}
+		}
 
 		const tokenStatus = TokenStatus[swapInfo.denom];
 		console.log(
@@ -388,9 +388,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		);
 
 		const senderAddress = wallets.origin.account?.address;
-		toast.info(`getting sender address ${senderAddress}`);
 		const receiverAddress = wallets.foreign.account?.address;
-		toast.info(`getting receiver address ${receiverAddress}`);
 
 		const client = wallets.origin.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
@@ -482,6 +480,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		balances,
 		clients,
 		closeNewWindow,
+		getClient,
 		getTokenBalances,
 		ibcNativeTokenBalance,
 		sendingTx,
