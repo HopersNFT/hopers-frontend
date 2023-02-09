@@ -242,7 +242,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const {
 		clients,
 		ibcBalance: ibcNativeTokenBalance,
-		getClient,
+		// getClient,
 	} = useClient(SelectOptions.map((option) => option.value));
 
 	// const getWallets = useCallback(
@@ -483,7 +483,6 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		balances,
 		clients,
 		closeNewWindow,
-		getClient,
 		getTokenBalances,
 		ibcNativeTokenBalance,
 		sendingTx,
