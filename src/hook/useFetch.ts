@@ -212,41 +212,32 @@ const useFetch = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	/**
-	 * Fetches the account balance and reward for each pool in the supported liquidities in /Constants/Liquidities.ts
-	 * @param account - The account to fetch infos for
-	 * @param poolLiquidityInfos - List containing informations about pools
-	 */
 	const fetchLiquidities = useCallback(
-		async (account, poolLiquidityInfos: TPool[]) => {
+		async (account, basicData: any) => {
 			let fetchLPBalanceQueries: any[] = [],
 				fetchRewardQueries: any[] = [];
 			let balances: any[] = [],
 				rewards: any[] = [];
 			let stakingQueryIndices: number[] = [],
 				tokenDecimals: number[] = [];
-			//Using reduce will still return something that populates the initial liquidities state, even if
-			//there is no query for the account if it is null
 			let liquidities: TPool[] = Liquidities.reduce(
 				(result: TPool[], liquidity, index: number) => {
-					const liquidityInfo: TPool | undefined =
-						poolLiquidityInfos.find(
-							(item) =>
-								item.token1 === liquidity.tokenA &&
-								item.token2 === liquidity.tokenB
-						);
+					const liquidityInfo: TPool | undefined = (
+						basicData as TPool[]
+					).find(
+						(item) =>
+							item.token1 === liquidity.tokenA &&
+							item.token2 === liquidity.tokenB
+					);
 					if (liquidityInfo) {
 						const lpAddress = liquidityInfo.lpAddress;
-						if (account) {
-							// console.log(`Add fetch pool info for ${liquidityInfo.token1}-${liquidityInfo.token2}`)
-							fetchLPBalanceQueries.push(
-								runQuery(lpAddress, {
-									balance: { address: account?.address },
-								})
-							);
-						}
+						fetchLPBalanceQueries.push(
+							runQuery(lpAddress, {
+								balance: { address: account?.address },
+							})
+						);
 						const stakingAddress = liquidityInfo.stakingAddress;
-						if (account && stakingAddress) {
+						if (stakingAddress) {
 							const stakingAddressArray =
 								typeof stakingAddress === "string"
 									? [stakingAddress]
@@ -255,10 +246,6 @@ const useFetch = () => {
 								typeof stakingAddress === "string"
 									? [liquidityInfo.config as TPoolConfig]
 									: (liquidityInfo.config as TPoolConfig[]);
-							// console.log(`Liquidity pool has ${stakingAddressArray.length} stacking addresses:`);
-							stakingAddressArray.forEach((x) => {
-								// console.log(x);
-							});
 							stakingAddressArray.forEach(
 								(address, addressIndex) => {
 									stakingQueryIndices.push(index);
@@ -272,7 +259,6 @@ const useFetch = () => {
 									} else {
 										tokenDecimals.push(6);
 									}
-									// console.log(`Add fetch stacking rewards for item ${addressIndex + 1}`);
 									fetchRewardQueries.push(
 										runQuery(address, {
 											staker_info: {
@@ -317,12 +303,10 @@ const useFetch = () => {
 			if (account) {
 				await Promise.all(fetchLPBalanceQueries)
 					.then((balanceResult) => (balances = balanceResult))
-					.catch((err1) => console.error(err1));
-				console.log(`Fetched fetchLPBalanceQueries`);
+					.catch((err1) => console.log(err1));
 				await Promise.all(fetchRewardQueries)
 					.then((rewardResult) => (rewards = rewardResult))
-					.catch((err2) => console.error(err2));
-				console.log(`Fetched fetchRewardQueries`);
+					.catch((err2) => console.log(err2));
 			}
 			if (balances.length) {
 				for (let index = 0; index < balances.length; index++) {
@@ -375,6 +359,8 @@ const useFetch = () => {
 							: totalEarned;
 				}
 			}
+			setLiquiditiesInfo(liquidities);
+			dispatch(setLiquidityInfo(liquidities));
 
 			setLiquiditiesInfo(liquidities);
 			dispatch(setLiquidityInfo(liquidities));
@@ -382,109 +368,91 @@ const useFetch = () => {
 		[dispatch, runQuery, tokenPrices]
 	);
 
-	const fetchOtherTokenPrice = useCallback(
-		(liquiditiesInfo: TPool[]) => {
-			// First, calculate HOPERS price
-			const hopersJunoLiquidity = liquiditiesInfo.find(
-				(liquidity) =>
-					liquidity.token1 === TokenType.HOPERS &&
-					liquidity.token2 === TokenType.JUNO
-			);
+	const fetchOtherTokenPrice = useCallback(() => {
+		// First, calculate HOPERS price
+		const hopersJunoLiquidity = liquiditiesInfo.find(
+			(liquidity) =>
+				liquidity.token1 === TokenType.HOPERS &&
+				liquidity.token2 === TokenType.JUNO
+		);
+		const junoPriceInUsd =
+			Number(junoPrice?.market_data?.current_price?.usd) || 0;
+		const ratio = hopersJunoLiquidity?.ratio || 0;
+		const hopersPrice = junoPriceInUsd * ratio;
+		dispatch(
+			setTokenPrice([
+				TokenType.HOPERS,
+				{ market_data: { current_price: { usd: hopersPrice } } },
+			])
+		);
 
-			const junoPriceInUsd =
-				Number(junoPrice?.market_data?.current_price?.usd) || 0;
-			const ratio = hopersJunoLiquidity?.ratio || 0;
-			const hopersPrice = junoPriceInUsd * ratio;
-
-			dispatch(
-				setTokenPrice([
-					TokenType.HOPERS,
-					{ market_data: { current_price: { usd: hopersPrice } } },
-				])
-			);
-
-			// Second calculates price of tokens which can't be fetched from coingecko
-			Object.keys(TokenCoingeckoIds).forEach((key: string) => {
-				const tokenType = key as TokenType;
-				if (
-					tokenType !== TokenType.HOPERS &&
-					!TokenCoingeckoIds[tokenType]
-				) {
-					const targetPool = liquiditiesInfo.find(
-						(liquidity) =>
-							liquidity.token1 === TokenType.HOPERS &&
-							liquidity.token2 === tokenType
-					);
-					const ratio = targetPool?.ratio || 0;
-					const targetPrice = ratio ? hopersPrice / ratio : 0;
-					dispatch(
-						setTokenPrice([
-							tokenType,
-							{
-								market_data: {
-									current_price: { usd: targetPrice },
-								},
+		// Second calculates price of tokens which can't be fetched from coingecko
+		Object.keys(TokenCoingeckoIds).forEach((key: string) => {
+			const tokenType = key as TokenType;
+			if (
+				tokenType !== TokenType.HOPERS &&
+				!TokenCoingeckoIds[tokenType]
+			) {
+				const targetPool = liquiditiesInfo.find(
+					(liquidity) =>
+						liquidity.token1 === TokenType.HOPERS &&
+						liquidity.token2 === tokenType
+				);
+				const ratio = targetPool?.ratio || 0;
+				const targetPrice = ratio ? hopersPrice / ratio : 0;
+				dispatch(
+					setTokenPrice([
+						tokenType,
+						{
+							market_data: {
+								current_price: { usd: targetPrice },
 							},
-						])
-					);
-				}
-			});
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[dispatch, junoPrice?.market_data?.current_price?.usd, liquiditiesInfo]
-	);
-
-	const fetchTokenPricesUsingPools = useCallback(
-		(poolLiquidityInfos: TPool[] = []) => {
-			if (poolLiquidityInfos?.length < 1) {
-				if (liquiditiesInfo?.length > 0) {
-					poolLiquidityInfos = liquiditiesInfo;
-				} else {
-					return;
-				}
+						},
+					])
+				);
 			}
+		});
+	}, [dispatch, junoPrice?.market_data?.current_price?.usd, liquiditiesInfo]);
 
-			// First, calculate HOPERS price
-			const hopersUsdcLiquidity = poolLiquidityInfos.find(
-				(liquidity) =>
-					liquidity.token1 === TokenType.HOPERS &&
-					liquidity.token2 === TokenType.USDC
-			);
-
-			const ratio = hopersUsdcLiquidity?.ratio || 0;
-			const hopersPrice = ratio;
-			dispatch(
-				setTokenPrice([
-					TokenType.HOPERS,
-					{ market_data: { current_price: { usd: hopersPrice } } },
-				])
-			);
-			// Second calculates price of tokens which can't be fetched from coingecko
-			Object.keys(TokenCoingeckoIds).forEach((key: string) => {
-				const tokenType = key as TokenType;
-				if (tokenType !== TokenType.HOPERS) {
-					const targetPool = liquiditiesInfo.find(
-						(liquidity) =>
-							liquidity.token1 === TokenType.HOPERS &&
-							liquidity.token2 === tokenType
-					);
-					const ratio = targetPool?.ratio || 0;
-					const targetPrice = ratio ? hopersPrice / ratio : 0;
-					dispatch(
-						setTokenPrice([
-							tokenType,
-							{
-								market_data: {
-									current_price: { usd: targetPrice },
-								},
+	const fetchTokenPricesUsingPools = useCallback(() => {
+		// First, calculate HOPERS price
+		const hopersUsdcLiquidity = liquiditiesInfo.find(
+			(liquidity) =>
+				liquidity.token1 === TokenType.HOPERS &&
+				liquidity.token2 === TokenType.USDC
+		);
+		const ratio = hopersUsdcLiquidity?.ratio || 0;
+		const hopersPrice = ratio;
+		dispatch(
+			setTokenPrice([
+				TokenType.HOPERS,
+				{ market_data: { current_price: { usd: hopersPrice } } },
+			])
+		);
+		// Second calculates price of tokens which can't be fetched from coingecko
+		Object.keys(TokenCoingeckoIds).forEach((key: string) => {
+			const tokenType = key as TokenType;
+			if (tokenType !== TokenType.HOPERS) {
+				const targetPool = liquiditiesInfo.find(
+					(liquidity) =>
+						liquidity.token1 === TokenType.HOPERS &&
+						liquidity.token2 === tokenType
+				);
+				const ratio = targetPool?.ratio || 0;
+				const targetPrice = ratio ? hopersPrice / ratio : 0;
+				dispatch(
+					setTokenPrice([
+						tokenType,
+						{
+							market_data: {
+								current_price: { usd: targetPrice },
 							},
-						])
-					);
-				}
-			});
-		},
-		[dispatch, liquiditiesInfo]
-	);
+						},
+					])
+				);
+			}
+		});
+	}, [dispatch, liquiditiesInfo]);
 
 	return {
 		fetchAllNFTs,
