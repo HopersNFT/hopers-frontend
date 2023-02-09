@@ -129,7 +129,8 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 	[ChainTypes.MARS]: {
 		chainName: "Mars",
 		chainId: "mars-1",
-		rpcEndpoint: "https://rpc.cosmos.directory/mars",
+		// rpcEndpoint: "https://rpc.cosmos.directory/mars",
+		rpcEndpoint: "https://rpc.mars.kingnodes.com/",
 		restEndpoint: "https://rest.cosmos.directory/mars",
 		faucetEndpoint: "",
 		addressPrefix: "mars",
