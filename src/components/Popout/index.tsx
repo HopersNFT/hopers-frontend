@@ -388,10 +388,9 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		);
 
 		const senderAddress = wallets.origin.account?.address;
+		toast.info(`getting sender address ${senderAddress}`);
 		const receiverAddress = wallets.foreign.account?.address;
-		toast.info(
-			`getting offline signer ${senderAddress} ${receiverAddress}`
-		);
+		toast.info(`getting receiver address ${receiverAddress}`);
 
 		const client = wallets.origin.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
