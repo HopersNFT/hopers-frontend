@@ -21,7 +21,7 @@ const useClient = (tokens?: TokenType[]) => {
 				const chainConfig = ChainConfigs[chainType];
 				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 				const { wallet, walletClient } = connectedWallet;
-				// toast.info(`getting offline signer ${chainType}`);
+				toast.info(`getting offline signer ${chainType}`);
 				const offlineSigner = await wallet.getOfflineSignerFunction(
 					walletClient
 				)(chainConfig.chainId);
@@ -46,7 +46,6 @@ const useClient = (tokens?: TokenType[]) => {
 							client: wasmChainClient,
 						};
 					} catch (e) {
-						toast.error(`getting client error ${chainType}`);
 						console.error("wallets", e);
 						return { account: account?.[0], client: null };
 					}
