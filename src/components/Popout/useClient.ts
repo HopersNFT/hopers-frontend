@@ -29,10 +29,23 @@ const useClient = (tokens?: TokenType[]) => {
 				)(chainConfig.chainId);
 				if (chainType === ChainTypes.MARS) {
 					toast.info(
-						`got offline signer ${chainType} ${!!offlineSigner.getAccounts}`
+						`got offline signer ${chainType} ${!!offlineSigner}`
 					);
 				}
-
+				try {
+					const account = await offlineSigner?.getAccounts();
+					if (chainType === ChainTypes.MARS) {
+						toast.info(`getting account ${chainType} ${!!account}`);
+					}
+				} catch (e: any) {
+					if (chainType === ChainTypes.MARS) {
+						toast.error(
+							`getting account ${chainType} ${JSON.stringify(
+								e.message
+							)}`
+						);
+					}
+				}
 				const account = await offlineSigner?.getAccounts();
 
 				let wasmChainClient = null;
