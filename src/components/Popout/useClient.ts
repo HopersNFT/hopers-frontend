@@ -2,14 +2,20 @@ import { useCallback, useEffect, useState } from "react";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { GasPrice } from "@cosmjs/stargate";
 import { useWalletManager } from "@noahsaso/cosmodal";
+import {
+	KeplrWalletConnectV1,
+	useWalletManager as useWalletManagerCosmodal,
+} from "cosmodal";
+import { Keplr } from "@keplr-wallet/types";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
 import { toast } from "react-toastify";
-import { getKeplr } from "../../features/accounts/useKeplr";
+import { getChainConfig } from "../../features/accounts/useKeplr";
 
 const useClient = (tokens?: TokenType[]) => {
 	const { connectedWallet } = useWalletManager();
+	const { getWallet } = useWalletManagerCosmodal();
 	const [wasmClients, setWasmClients] = useState<TWasmChainClients>(
 		{} as TWasmChainClients
 	);
@@ -45,14 +51,18 @@ const useClient = (tokens?: TokenType[]) => {
 						toast.info(`got account ${chainType} ${!!account}`);
 					}
 				} catch (e: any) {
-					const keplr = await getKeplr();
+					const wallet: Keplr | KeplrWalletConnectV1 =
+						await getWallet();
 					if (chainType === ChainTypes.MARS) {
 						toast.error(
 							`got account ${chainType} ${JSON.stringify(
 								e.message
-							)} ${!!keplr}`
+							)} ${!!wallet}`
 						);
 					}
+					wallet.experimentalSuggestChain(
+						getChainConfig(chainConfig)
+					);
 				}
 
 				let wasmChainClient = null;
@@ -81,7 +91,7 @@ const useClient = (tokens?: TokenType[]) => {
 			}
 			return { account: null, client: null };
 		},
-		[connectedWallet]
+		[connectedWallet, getWallet]
 	);
 
 	useEffect(() => {
