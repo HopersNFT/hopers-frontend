@@ -84,6 +84,7 @@ const RouteChangeListener = () => {
 			refreshLiquidity();
 		}
 		window.scrollTo(0, 0);
+	 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [pathname]);
 
 	//Leave this as last to set that the first updater render ended
