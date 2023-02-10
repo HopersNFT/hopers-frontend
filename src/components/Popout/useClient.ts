@@ -6,7 +6,7 @@ import {
 	KeplrWalletConnectV1,
 	useWalletManager as useWalletManagerCosmodal,
 } from "cosmodal";
-import { Keplr } from "@keplr-wallet/types";
+import { ChainInfo, Keplr } from "@keplr-wallet/types";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
@@ -61,7 +61,7 @@ const useClient = (tokens?: TokenType[]) => {
 						);
 					}
 					wallet.experimentalSuggestChain(
-						getChainConfig(chainConfig)
+						getChainConfig(chainConfig) as ChainInfo
 					);
 				}
 
