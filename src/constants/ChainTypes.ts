@@ -133,7 +133,7 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 	},
 	[ChainTypes.MARS]: {
 		chainName: "Mars",
-		chainId: "mars-1",
+		chainId: "mars",
 		// rpcEndpoint: "https://rpc.cosmos.directory/mars",
 		rpcEndpoint: "https://rpc-mars.keplr.app",
 		restEndpoint: "https://rest.cosmos.directory/mars",
