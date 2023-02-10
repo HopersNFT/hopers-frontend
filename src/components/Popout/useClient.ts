@@ -60,6 +60,7 @@ const useClient = (tokens?: TokenType[]) => {
 							)} ${!!wallet}`
 						);
 					}
+					// @ts-nocheck
 					wallet.experimentalSuggestChain(
 						getChainConfig(chainConfig) as ChainInfo
 					);
