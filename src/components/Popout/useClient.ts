@@ -46,7 +46,7 @@ const useClient = (tokens?: TokenType[]) => {
 				} catch (e: any) {
 					toast.error(
 						`got account ${chainType} ${JSON.stringify(
-							e.message
+							e?.message || "no error message"
 						)} ${!!wallet}`
 					);
 				}
