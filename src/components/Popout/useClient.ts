@@ -61,7 +61,7 @@ const useClient = (tokens?: TokenType[]) => {
 						);
 					}
 					wallet.experimentalSuggestChain(
-						// @ts-nocheck
+						// @ts-ignore
 						getChainConfig(chainConfig) as ChainInfo
 					);
 				}
