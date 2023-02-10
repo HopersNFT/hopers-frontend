@@ -178,6 +178,7 @@ const useFetch = () => {
 		const result = await getBalances();
 		if (!result) return;
 		dispatch(setTokenBalances(result as BalancesType));
+		return result;
 	}, [dispatch, getBalances]);
 
 	// const fetchAllNFTs = useCallback(

@@ -191,6 +191,7 @@ const Header: React.FC = () => {
 		refreshNft,
 		refreshLiquidity,
 		refreshBalances,
+		refreshPrice,
 	} = useRefresh();
 	const { isMobile } = useWindowSize(900);
 
@@ -214,7 +215,7 @@ const Header: React.FC = () => {
 	}, [account]);
 
 	useEffect(() => {
-		console.log("---------REFRESH_FROM_SET_KEPLR_ACCOUNT---------------")
+		console.log("---------REFRESH_FROM_HEADER_CONNECTED_WALLET---------------")
 		if (!connectedWallet) {
 			dispatch(setKeplrAccount());
 			console.log("Clear balances")
@@ -230,6 +231,7 @@ const Header: React.FC = () => {
 				})
 			);
 			refreshNft();
+			refreshPrice();
 			refreshBalances();
 			refreshLiquidity();
 		}
