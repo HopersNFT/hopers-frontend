@@ -6,7 +6,7 @@ export enum ChainTypes {
 	OSMOSIS = "osmosis-1",
 	KUJIRA = "kaiyo-1",
 	STARGAZE = "stargaze-1",
-	MARS = "mars",
+	MARS = "mars-1",
 	PLANQ = "planq_7070-2",
 	EVMOS = "evmos_9001-2",
 }
@@ -133,7 +133,7 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 	},
 	[ChainTypes.MARS]: {
 		chainName: "Mars",
-		chainId: "mars",
+		chainId: "mars-1",
 		// rpcEndpoint: "https://rpc.cosmos.directory/mars",
 		rpcEndpoint: "https://rpc-mars.keplr.app",
 		restEndpoint: "https://rest.cosmos.directory/mars",
