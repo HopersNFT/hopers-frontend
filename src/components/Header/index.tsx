@@ -196,7 +196,6 @@ const Header: React.FC = () => {
 	const { isMobile } = useWindowSize(900);
 
 	useEffect(() => {
-		refresh();
 		// initContracts();
 		return () => {
 			dispatch(setKeplrAccount());

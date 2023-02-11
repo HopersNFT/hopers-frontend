@@ -36,13 +36,12 @@ export default function Updater(): null {
 		onLiquidityRefresh,
 		onBalancesRefresh,
 	} = useRefresh();
-	const account = useAppSelector((state) => state?.accounts?.keplrAccount);
+
 	const {
 		fetchCollectionInfo,
 		setMarketplaceNFTsState,
 		fetchMyNFTs,
 		fetchLiquidities,
-		//  fetchOtherTokenPrice,
 		fetchTokenPricesUsingPools,
 		getTokenBalances,
 	} = useFetch();

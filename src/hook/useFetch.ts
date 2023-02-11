@@ -209,8 +209,13 @@ const useFetch = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	/**
+	 * Fetches the account balance and reward for each pool in the supported liquidities in /Constants/Liquidities.ts
+	 * @param account - The account to fetch infos for
+	 * @param poolLiquidityInfos - List containing informations about pools
+	 */
 	const fetchLiquidities = useCallback(
-		async (account, basicData: any) => {
+		async (account, poolLiquidityInfos: TPool[]) => {
 			let fetchLPBalanceQueries: any[] = [],
 				fetchRewardQueries: any[] = [];
 			let balances: any[] = [],
@@ -238,7 +243,7 @@ const useFetch = () => {
 							);
 						}
 						const stakingAddress = liquidityInfo.stakingAddress;
-						if (stakingAddress) {
+						if (account && stakingAddress) {
 							const stakingAddressArray =
 								typeof stakingAddress === "string"
 									? [stakingAddress]
@@ -264,6 +269,7 @@ const useFetch = () => {
 									} else {
 										tokenDecimals.push(6);
 									}
+									// console.log(`Add fetch stacking rewards for item ${addressIndex + 1}`);
 									fetchRewardQueries.push(
 										runQuery(address, {
 											staker_info: {
@@ -308,10 +314,12 @@ const useFetch = () => {
 			if (account) {
 				await Promise.all(fetchLPBalanceQueries)
 					.then((balanceResult) => (balances = balanceResult))
-					.catch((err1) => console.log(err1));
+					.catch((err1) => console.error(err1));
+				console.log(`Fetched fetchLPBalanceQueries`);
 				await Promise.all(fetchRewardQueries)
 					.then((rewardResult) => (rewards = rewardResult))
-					.catch((err2) => console.log(err2));
+					.catch((err2) => console.error(err2));
+				console.log(`Fetched fetchRewardQueries`);
 			}
 			if (balances.length) {
 				for (let index = 0; index < balances.length; index++) {
@@ -364,8 +372,6 @@ const useFetch = () => {
 							: totalEarned;
 				}
 			}
-			setLiquiditiesInfo(liquidities);
-			dispatch(setLiquidityInfo(liquidities));
 
 			setLiquiditiesInfo(liquidities);
 			dispatch(setLiquidityInfo(liquidities));
