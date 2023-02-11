@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
-const REFRESH_INTERVAL = 1000 * 10;
-const FETCH_PRICE_INTERVAL = 60 * 60 * 1000;
+const REFRESH_NFT_INTERVAL = 1000 * 30;
+const REFRESH_PRICE_INTERVAL = 1000 * 10;
+const REFRESH_CACHE_INTERVAL = 1000 * 60 * 30;
+const REFRESH_LIQUIDITY_INTERVAL = 1000 * 30;
+const REFRESH_BALANCES_INTERVAL = 1000 * 13;
 
 const RefreshContext = React.createContext({
   value: 0,
@@ -37,7 +40,9 @@ const RefreshContextProvider = ({ children }: { children: any }) => {
   useEffect(() => {
     const interval = setInterval(async () => {
       if (isBrowserTabActiveRef.current) {
-        setValue((prev) => prev + 1);
+       console.log("--------REFRESH_NFT_INTERVAL--------");
+       setNftValue((prev) => prev + 1);
+       console.log("--------REFRESH_NFT_INTERVAL-SET--------");
       }
     }, REFRESH_INTERVAL);
     return () => clearInterval(interval);
@@ -47,13 +52,52 @@ const RefreshContextProvider = ({ children }: { children: any }) => {
     const interval = setInterval(async () => {
       if (isBrowserTabActiveRef.current) {
         setPriceValue((prev) => prev + 1);
+        console.log("--------REFRESH_PRICE_INTERVAL-SET--------");
       }
     }, FETCH_PRICE_INTERVAL);
     return () => clearInterval(interval);
   }, [isBrowserTabActiveRef]);
 
-  const refreshAll = useCallback(() => {
-    setValue((prev) => prev + 1);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isBrowserTabActiveRef.current) {
+        console.log("--------REFRESH_CACHE_INTERVAL--------");
+        setCacheValue((prev) => prev + 1);
+        console.log("--------REFRESH_CACHE_INTERVAL-SET--------");
+      }
+    }, REFRESH_CACHE_INTERVAL);
+    return () => clearInterval(interval);
+  }, [isBrowserTabActiveRef]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isBrowserTabActiveRef.current) {
+        console.log("--------REFRESH_LIQUIDITY_INTERVAL--------");
+        setLiquidityValue((prev) => prev + 1);
+        console.log("--------REFRESH_LIQUIDITY_INTERVAL-SET--------");
+      }
+    }, REFRESH_LIQUIDITY_INTERVAL);
+    return () => clearInterval(interval);
+  }, [isBrowserTabActiveRef]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isBrowserTabActiveRef.current) {
+        console.log("--------REFRESH_BALANCES_INTERVAL--------");
+        setBalancesValue((prev) => prev + 1);
+        console.log("--------REFRESH_BALANCES_INTERVAL-SET--------");
+      }
+    }, REFRESH_BALANCES_INTERVAL);
+    return () => clearInterval(interval);
+  }, [isBrowserTabActiveRef]);
+
+  const refreshNft = useCallback(() => {
+    console.log("--------refreshNft--------");
+    setNftValue((prev) => prev + 1);
+  }, []);
+
+  const refreshPrice = useCallback(() => {
+    console.log("--------refreshPrice--------");
     setPriceValue((prev) => prev + 1);
   }, []);
 
