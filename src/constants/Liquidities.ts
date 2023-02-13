@@ -42,6 +42,14 @@ export const Liquidities: TLiquidity[] = [
 	},
 	{
 		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.EVMOS,
+		contractAddress:
+			"juno1syfzy9vqkax28t0egf7lep79274f5at6gq4mrk6e2nl5hsren2vsmzrhp2",
+		stakingAddress:
+			"juno1e3lr0p957kmpk53dcxtms57vsmmzxcwr4ldwppjdayrhwfpmmzfqmukn6u",
+	},
+	{
+		tokenA: TokenType.HOPERS,
 		tokenB: TokenType.MARS,
 		contractAddress:
 			"juno1t54zecqjyvkheugfn6xtyf2v0yn7n0ea6458j8p5w4pn2dt8yg0s4a7c03",
@@ -197,6 +205,18 @@ export const Liquidities: TLiquidity[] = [
 		tokenB: TokenType.HOWL,
 		contractAddress:
 			"juno14gq07cq43ssk5a07wxkcvfy80n27q075rl7zs0l2eym9f7aa0l5qga9g05",
+	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.KLEO,
+		contractAddress:
+			"juno13amkjs0mtwpjsz65lpk30pacxhx7jlscwmzq5jegqs583zmk7fkq9c8scx",
+	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.JAPE,
+		contractAddress:
+			"juno1qx73rlq6uqxmxlz5phtz3anzzh2rq8cxmwz56r33m6xskjdt6v4s724ckf",
 	},
 ];
 

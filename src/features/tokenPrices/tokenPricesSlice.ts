@@ -31,6 +31,10 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.STARS]: "stargaze",
 	[TokenType.MARS]: "",
 	[TokenType.HOWL]: "",
+	[TokenType.KLEO]: "",
+	[TokenType.JAPE]: "",
+	// [TokenType.PLANQ]: "",
+	[TokenType.EVMOS]: "evmos",
 };
 
 const CoinGeckoAPIKey = "CG-CV5rXz5JpbGcc36wL76u5gnd";

@@ -116,7 +116,7 @@ export default function Updater(): null {
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pathname]);
+	}, []);
 
 	useEffect(() => {
 		if (isFirstRef.current || onCacheRefresh === 0) {
@@ -140,21 +140,22 @@ export default function Updater(): null {
 		if (allowedFetchLiquiditiesPaths.indexOf(pathname) >= 0) {
 			if (basicData?.liquiditiesInfo) {
 				console.log("executing");
-				updateLiquiditiesFromCache().then(() => {
-					fetchLiquidities(account, basicData.liquiditiesInfo);
-					console.log("____fetchTokenPricesUsingPools____");
-					fetchTokenPricesUsingPools();
-				});
+				fetchLiquidities(account, basicData.liquiditiesInfo);
+				console.log("____fetchTokenPricesUsingPools____");
 			} else {
 				console.log("returning because of empty basic data");
-				return;
+				updateLiquiditiesFromCache().then((data) => {
+					fetchLiquidities(account, data.liquiditiesInfo);
+					console.log("____fetchTokenPricesUsingPools____");
+				});
 			}
+			fetchTokenPricesUsingPools();
 		} else {
 			console.log("returning");
 			return;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onLiquidityRefresh, pathname]);
+	}, [onLiquidityRefresh, pathname, account]);
 
 	useEffect(() => {
 		if (isFirstRef.current || onBalancesRefresh === 0) {
@@ -174,7 +175,7 @@ export default function Updater(): null {
 			return;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onBalancesRefresh, account?.address, pathname]);
+	}, [onBalancesRefresh, account?.address, pathname, getTokenBalances]);
 
 	useEffect(() => {
 		if (isFirstRef.current || onPriceRefresh === 0) {
