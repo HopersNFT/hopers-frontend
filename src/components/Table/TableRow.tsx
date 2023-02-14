@@ -7,7 +7,7 @@ import {
 } from "./styled";
 import { ColumnTypes, TRow } from "./type";
 
-const AnimationTime = 500; // in ms
+const AnimationTime = 160; // in ms
 
 const Row = <T extends object>({
 	renderDetailRow,
@@ -20,8 +20,15 @@ const Row = <T extends object>({
 	const [finishedExpanding, setFinishedExpanding] = useState<boolean>(false);
 	const [element, setElement] = useState<HTMLDivElement | null>(null);
 
+	
 	useEffect(() => {
-		if (defaultExpanded) setExpanded(defaultExpanded);
+		setExpanded(defaultExpanded);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [(data as any)?.id]);
+
+	useEffect(() => {
+		if(defaultExpanded)
+			setExpanded(defaultExpanded);
 	}, [defaultExpanded]);
 
 	const handleClickRow = () => {

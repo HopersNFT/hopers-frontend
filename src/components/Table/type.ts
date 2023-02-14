@@ -17,6 +17,13 @@ export interface TTable<T extends object> {
 	renderDetailRow?: TRenderDetailRow<T>;
 }
 
+export interface ITablePaginator{
+	pageSize:number;
+	pagesRange:number[];
+	currentPage:number;
+	onClick?: (selectedPage: number) => void;
+}
+
 export interface TRow<T extends object> {
 	data: T;
 	renderDetailRow?: TRenderDetailRow<T>;

@@ -1,10 +1,29 @@
 import styled, { css, keyframes } from "styled-components";
+import Button from "../Button";
 import Text from "../Text";
 
 export const Wrapper = styled.div`
 	width: 100%;
 `;
+export const TablePaginator = 
+styled.div`
+	width: 100%;
+	margin-top: 8px;
+`;
 
+export const PaginatorButton = styled(Button)<{active?: boolean, visible:boolean}>`
+	position: relative;
+	visibility: ${({ visible }) => (visible ? "" : "hidden")};
+	width: 40px;
+	height: 40px;
+	margin: 4px;
+	border: 1px solid #02E296;
+	background-color: ${({ active }) => (active ? "#02E296" : "white")};
+	color: ${({ active }) => (active ? "white" : "#02E296")};
+	border-radius: 100%;
+	font-size: 16px;
+	text-align: center;
+`;
 export const TableControlPanel = styled.div`
 	display: flex;
 	justify-content: space-between;
@@ -263,16 +282,16 @@ export const TableRow = styled.div<{
                             height: ${detailRowHeight}px;
                         }
                     `
-					: expanded === false
-					? keyframes`
-                        from {
-                            height: ${detailRowHeight}px;
-                        }
-                        to {
-                            height: 0px;
-                        }
-                    `
+					// : expanded === false
+					// ? keyframes`
+                    //     from {
+                    //         height: ${detailRowHeight}px;
+                    //     }
+                    //     to {
+                    //         height: 0px;
+                    //     }
+                    // `
 					: null}
-			${({ animationTime }) => animationTime ?? 500}ms ease-in-out forwards;
+			${({ animationTime }) => animationTime ?? 160}ms ease-in-out forwards;
 	}
 `;
