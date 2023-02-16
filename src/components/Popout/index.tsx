@@ -498,8 +498,12 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 						ibcMsg
 					);
 
-					console.log("debug evm transfer message", transferMsg);
-					const sign = await window?.keplr?.signDirect(
+					console.log(
+						"debug evm transfer message",
+						transferMsg,
+						window.keplr
+					);
+					let sign = await window?.keplr?.signDirect(
 						chainInfoForMsg.cosmosChainId,
 						sender.accountAddress,
 						{
