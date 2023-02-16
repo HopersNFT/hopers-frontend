@@ -12,6 +12,8 @@ import "font-awesome/css/font-awesome.css";
 
 ReactDOM.render(
   <React.StrictMode>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Poppins"></link>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <App />
