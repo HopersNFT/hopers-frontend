@@ -25,7 +25,7 @@ const Table = <T extends object>({
 	option,
 	defaultExpanded,
 }: TTable<T>) => {
-	const pageSize = 8;
+	const pageSize = 15;
 	
 	const [sortDirections, setSortDirections] = useState<TSortDirection>(
 		{} as TSortDirection
@@ -195,14 +195,14 @@ const Table = <T extends object>({
 			</TableWrapper>
 			<TablePaginator>
 					<PaginatorButton
-							visible={paginator.currentPage > 1}
+							enabled={paginator.currentPage > 1}
 							key={"<<"}
 							onClick={() => selectFirstPage()}
 						>
 							{"<<"}
 					</PaginatorButton>
 					<PaginatorButton
-							visible={paginator.currentPage > 0}
+							enabled={paginator.currentPage > 0}
 							key={"<"}
 							onClick={() => selectPageBefore()}
 						>
@@ -211,7 +211,7 @@ const Table = <T extends object>({
 					{paginator.pagesRange.map((el, index) => {
 						return (
 						<PaginatorButton							
-							visible={true}
+							enabled={true}
 							active={paginator.currentPage === index}
 							key={el}
 							onClick={() => handleChangePaginatorValue(index)}
@@ -221,14 +221,14 @@ const Table = <T extends object>({
 						)
 					})}
 					<PaginatorButton
-							visible={paginator.currentPage < paginator.pagesRange.length - 1}
+							enabled={paginator.currentPage < paginator.pagesRange.length - 1}
 							key={">"}
 							onClick={() => selectPageAfter()}
 						>
 							{">"}
 					</PaginatorButton>
 					<PaginatorButton
-							visible={paginator.currentPage < paginator.pagesRange.length - 2}
+							enabled={paginator.currentPage < paginator.pagesRange.length - 2}
 							key={">>"}
 							onClick={() => selectLastPage()}
 						>

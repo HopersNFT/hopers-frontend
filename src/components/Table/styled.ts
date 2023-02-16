@@ -11,15 +11,16 @@ styled.div`
 	margin-top: 8px;
 `;
 
-export const PaginatorButton = styled(Button)<{active?: boolean, visible:boolean}>`
+export const PaginatorButton = styled(Button)<{active?: boolean, enabled?: boolean}>`
 	position: relative;
-	visibility: ${({ visible }) => (visible ? "" : "hidden")};
 	width: 40px;
 	height: 40px;
 	margin: 4px;
-	border: 1px solid #02E296;
-	background-color: ${({ active }) => (active ? "#02E296" : "white")};
-	color: ${({ active }) => (active ? "white" : "#02E296")};
+	border: ${({ enabled }) => (enabled ? "1px solid #02E296" : "1px solid #dadada")};
+	pointer-events: ${({ enabled }) => (enabled ? "all" : "none")};
+	background-color: ${({ active, enabled }) => (active ? "#02E296" : enabled ? "white" : "white")};
+	color: ${({ active, enabled }) => (active ? "white" : enabled ? "#02E296" : "#dadada")};
+	font-weight: ${({ active }) => (active ? "bold" : "")};
 	border-radius: 100%;
 	font-size: 16px;
 	text-align: center;
