@@ -8,11 +8,11 @@ import React, {
 
 // import { toast } from "react-toastify";
 // import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
-import {
-	// MsgTransferEncodeObject,
-	// GasPrice,
-	MsgTransferEncodeObject,
-} from "@cosmjs/stargate";
+// import {
+// 	// MsgTransferEncodeObject,
+// 	// GasPrice,
+// 	MsgTransferEncodeObject,
+// } from "@cosmjs/stargate";
 // import {
 // 	SigningCosmWasmClient,
 // 	// CosmWasmClient,
@@ -39,6 +39,16 @@ import ReactSelect, { ControlProps } from "react-select";
 import { addSuffix, convertStringToNumber } from "../../util/string";
 // import { AccountData } from "@cosmjs/proto-signing";
 import useClient from "./useClient";
+import { isMobileDevice } from "../../util/basic";
+import { toast } from "react-toastify";
+import { createTxIBCMsgTransfer } from "@tharsis/transactions";
+import getQuery from "../../util/useAxios";
+import { generateEndpointAccount } from "@tharsis/provider";
+import { createTxRaw } from "@tharsis/proto";
+import {
+	generateEndpointBroadcast,
+	generatePostBodyBroadcast,
+} from "@tharsis/provider/dist/rest/broadcast";
 
 // import {
 //   Wrapper,
@@ -235,9 +245,13 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const { getTokenBalances } = useFetch();
 	const { connectedWallet } = useWalletManager();
 
-	const { clients, ibcBalance: ibcNativeTokenBalance } = useClient(
-		SelectOptions.map((option) => option.value)
-	);
+	const isMobile = useMemo(() => isMobileDevice(), []);
+
+	const {
+		clients,
+		ibcBalance: ibcNativeTokenBalance,
+		getClient,
+	} = useClient(SelectOptions.map((option) => option.value));
 
 	// const getWallets = useCallback(
 	// 	async ({
@@ -254,6 +268,14 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	// 	},
 	// 	[]
 	// );
+
+	useEffect(() => {
+		if (isMobile) {
+			toast.info(
+				"Please check your KEPLR wallet and approve to add chains!"
+			);
+		}
+	}, [isMobile]);
 
 	useEffect(() => {
 		setSelectedTokenType(swapInfoProps.denom);
@@ -347,15 +369,22 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const originChainConfig = ChainConfigs[swapInfo.swapChains.origin];
 
 		const timeout = Math.floor(new Date().getTime() / 1000) + 600;
-		const timeoutTimestampNanoseconds = timeout
-			? Long.fromNumber(timeout).multiply(1_000_000_000)
-			: undefined;
+		const timeoutTimestampNanoseconds =
+			Long.fromNumber(timeout).multiply(1_000_000_000);
 
 		if (!wallets.origin || !wallets.foreign) {
 			setErrMsg("getting clients failed.");
 			setStatusMsg("");
 			setSendingTx(false);
-			return;
+			if (!wallets.origin) {
+				wallets.origin = await getClient(swapInfo.swapChains.origin);
+			}
+			if (!wallets.foreign) {
+				wallets.foreign = await getClient(swapInfo.swapChains.foreign);
+			}
+			if (!wallets.origin || !wallets.foreign) {
+				return;
+			}
 		}
 
 		const tokenStatus = TokenStatus[swapInfo.denom];
@@ -366,8 +395,18 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			swapInfo
 		);
 
-		const senderAddress = wallets.origin.account?.address;
-		const receiverAddress = wallets.foreign.account?.address;
+		const senderAddress = wallets.origin.account?.address || "";
+		const receiverAddress = wallets.foreign.account?.address || "";
+		const sourceChannel =
+			swapInfo.swapType === SwapType.DEPOSIT
+				? IBCConfig[tokenStatus.chain].channel
+				: IBCConfig[tokenStatus.chain].juno_channel;
+		const transferAmount = String(
+			Math.floor(
+				Number(swapAmount) *
+					Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6)
+			)
+		);
 
 		const client = wallets.origin.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
@@ -400,58 +439,166 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			}
 		}
 
-		const transferMsg: MsgTransferEncodeObject = {
-			typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
-			value: MsgTransfer.fromPartial({
-				sourcePort: "transfer",
-				sourceChannel:
-					swapInfo.swapType === SwapType.DEPOSIT
-						? IBCConfig[tokenStatus.chain].channel
-						: IBCConfig[tokenStatus.chain].juno_channel,
-				sender: senderAddress,
-				receiver: receiverAddress,
-				token: {
-					denom:
-						swapInfo.swapType === SwapType.DEPOSIT
-							? tokenStatus.denom || originChainConfig.microDenom
-							: swapInfo.denom,
-					amount: String(
-						Math.floor(
-							Number(swapAmount) *
-								Math.pow(
-									10,
-									swapInfo.swapType === SwapType.DEPOSIT
-										? 6
-										: TokenStatus[swapInfo.denom].decimal ||
-												6
-								)
-						)
-					),
-				},
-				timeoutHeight: undefined,
-				timeoutTimestamp: timeoutTimestampNanoseconds,
-			}),
-		};
-		console.log("debug transfer message", transferMsg);
 		if (senderAddress && client) {
 			setStatusMsg("executing transaction...");
 			// toast.info("executing transaction...");
-			try {
-				const tx = await client.signAndBroadcast(
-					senderAddress,
-					[transferMsg],
-					"auto",
-					"memo"
-				);
-				await getTokenBalances();
-				closeNewWindow(true);
-				setStatusMsg("");
-				console.log("popout transaction successfully", tx);
-			} catch (e) {
-				console.error("debug popout transaction error", e);
-				setErrorMsg("error occured during transaction");
-				setStatusMsg("");
-				setSendingTx(false);
+			if (originChainConfig.isEVM) {
+				try {
+					const junoClient = clients[ChainTypes.JUNO];
+					const junoBlockHeight = junoClient.client
+						? await junoClient.client.getHeight()
+						: 0;
+					const ibcMsg = {
+						receiver: receiverAddress,
+						sender: senderAddress,
+						sourceChannel,
+						sourcePort: "transfer",
+						timeoutTimestamp: String(timeoutTimestampNanoseconds),
+						amount: transferAmount,
+						denom: originChainConfig.microDenom,
+						revisionNumber: 1,
+						revisionHeight: junoBlockHeight + 150,
+					};
+					const chainInfoForMsg = {
+						chainId: originChainConfig.evmChainId || 0,
+						cosmosChainId: originChainConfig.chainId,
+					};
+					console.log("debug ibc msg", ibcMsg, wallets);
+
+					const accountResult = await getQuery({
+						method: "get",
+						url: `${
+							originChainConfig.restEndpoint
+						}${generateEndpointAccount(senderAddress)}`,
+					});
+					console.log("debug account result", accountResult);
+
+					const sender = {
+						accountAddress:
+							accountResult.account.base_account.address,
+						sequence: accountResult.account.base_account.sequence,
+						accountNumber:
+							accountResult.account.base_account.account_number,
+						pubkey:
+							accountResult.account.base_account.pub_key?.key ||
+							"",
+					};
+
+					const fee = {
+						amount: "20",
+						denom: originChainConfig.microDenom,
+						gas: "200000",
+					};
+
+					const transferMsg = createTxIBCMsgTransfer(
+						chainInfoForMsg,
+						sender,
+						fee,
+						"ibc_transfer",
+						ibcMsg
+					);
+
+					console.log("debug evm transfer message", transferMsg);
+					const sign = await window?.keplr?.signDirect(
+						chainInfoForMsg.cosmosChainId,
+						sender.accountAddress,
+						{
+							bodyBytes:
+								transferMsg.signDirect.body.serializeBinary(),
+							authInfoBytes:
+								transferMsg.signDirect.authInfo.serializeBinary(),
+							chainId: chainInfoForMsg.cosmosChainId,
+							accountNumber: new Long(sender.accountNumber),
+						},
+						// @ts-expect-error the types are not updated on Keplr side
+						{ isEthereum: true }
+					);
+					console.log("debug evm sign", sign);
+
+					if (sign !== undefined) {
+						let rawTx = createTxRaw(
+							sign.signed.bodyBytes,
+							sign.signed.authInfoBytes,
+							[
+								new Uint8Array(
+									Buffer.from(
+										sign.signature.signature,
+										"base64"
+									)
+								),
+							]
+						);
+
+						// Broadcast it
+						const postOptions = {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: generatePostBodyBroadcast(rawTx),
+						};
+						try {
+							let broadcastPost = await fetch(
+								`${
+									originChainConfig.restEndpoint
+								}/${generateEndpointBroadcast()}`,
+								postOptions
+							);
+							let response = await broadcastPost.json();
+							console.log(
+								"debug popout transaction successfully",
+								response
+							);
+							await getTokenBalances();
+							closeNewWindow(true);
+							setStatusMsg("");
+						} catch (e) {
+							console.error("debug popout transaction error", e);
+							setErrorMsg("error occured during transaction");
+							setStatusMsg("");
+							setSendingTx(false);
+						}
+					}
+				} catch (e) {
+					console.log("debug evm transfer error", e);
+				}
+			} else {
+				const transferMsg = {
+					typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+					value: MsgTransfer.fromPartial({
+						sourcePort: "transfer",
+						sourceChannel,
+						sender: senderAddress,
+						receiver: receiverAddress,
+						token: {
+							denom:
+								swapInfo.swapType === SwapType.DEPOSIT
+									? tokenStatus.denom ||
+									  originChainConfig.microDenom
+									: swapInfo.denom,
+							amount: transferAmount,
+						},
+						timeoutHeight: undefined,
+						timeoutTimestamp: timeoutTimestampNanoseconds,
+					}),
+				};
+				console.log("debug cosmos transfer message", transferMsg);
+
+				try {
+					const tx = await client.signAndBroadcast(
+						senderAddress,
+						[transferMsg],
+						"auto",
+						"memo"
+					);
+					await getTokenBalances();
+					closeNewWindow(true);
+					setStatusMsg("");
+					console.log("popout transaction successfully", tx);
+				} catch (e) {
+					console.error("debug popout transaction error", e);
+					setErrorMsg("error occured during transaction");
+					setStatusMsg("");
+					setSendingTx(false);
+				}
 			}
 		} else {
 			setStatusMsg("");
@@ -461,6 +608,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		balances,
 		clients,
 		closeNewWindow,
+		getClient,
 		getTokenBalances,
 		ibcNativeTokenBalance,
 		sendingTx,
@@ -488,7 +636,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 						ibcNativeTokenBalance[swapInfo.denom]?.amount
 					) *
 						ratio) /
-						1e6
+						Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6)
 			);
 		} else {
 			const tokenBalance =
@@ -543,7 +691,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			(balances?.[token]?.amount || 0) /
 			Math.pow(10, TokenStatus[token].decimal || 6);
 		const ibcTokenBalance =
-			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
+			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) /
+			Math.pow(10, TokenStatus[token].decimal || 6);
 		const tokenPrice =
 			tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
@@ -603,7 +752,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			(balances?.[token]?.amount || 0) /
 			Math.pow(10, TokenStatus[token].decimal || 6);
 		const ibcTokenBalance =
-			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
+			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) /
+			Math.pow(10, TokenStatus[token].decimal || 6);
 		const tokenPrice =
 			tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
@@ -683,7 +833,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				/>
 				<div
 					style={{
-						height: `calc(100% - ${logoHeight || 70}px - 50px)`,
+						height: `calc(100% - ${logoHeight || 70}px - 70px)`,
 					}}
 					className="container"
 				>

@@ -5,6 +5,7 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
+import { getChainConfig } from "../../features/accounts/useKeplr";
 // import { toast } from "react-toastify";
 
 const useClient = (tokens?: TokenType[]) => {
@@ -21,12 +22,36 @@ const useClient = (tokens?: TokenType[]) => {
 				const chainConfig = ChainConfigs[chainType];
 				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 				const { wallet, walletClient } = connectedWallet;
-				// toast.info(`getting offline signer ${chainType}`);
+				// if (chainType === ChainTypes.MARS) {
+				// 	toast.info(`getting offline signer ${chainType}`);
+				// }
 				const offlineSigner = await wallet.getOfflineSignerFunction(
 					walletClient
 				)(chainConfig.chainId);
-				// toast.info(`getting account ${chainType}`);
-				const account = await offlineSigner?.getAccounts();
+				// if (chainType === ChainTypes.MARS) {
+				// 	toast.info(
+				// 		`got offline signer ${chainType} ${!!offlineSigner}`
+				// 	);
+				// }
+
+				let account = null;
+
+				try {
+					// if (chainType === ChainTypes.MARS) {
+					// 	toast.info(`getting account ${chainType} `);
+					// }
+					account = await offlineSigner?.getAccounts();
+					// if (chainType === ChainTypes.MARS) {
+					// 	toast.info(`got account ${chainType} ${!!account}`);
+					// }
+				} catch (e: any) {
+					// toast.error(
+					// 	`got account ${chainType} ${JSON.stringify(
+					// 		e?.message || "no error message"
+					// 	)} ${!!wallet}`
+					// );
+				}
+
 				let wasmChainClient = null;
 				if (offlineSigner) {
 					try {
@@ -42,12 +67,12 @@ const useClient = (tokens?: TokenType[]) => {
 								}
 							);
 						return {
-							account: account?.[0],
+							account: account?.[0] || null,
 							client: wasmChainClient,
 						};
 					} catch (e) {
 						console.error("wallets", e);
-						return { account: account?.[0], client: null };
+						return { account: account?.[0] || null, client: null };
 					}
 				}
 			}
@@ -70,6 +95,7 @@ const useClient = (tokens?: TokenType[]) => {
 				try {
 					// toast.info(`getting client start ${key}`);
 					const client = await getClient(chain);
+
 					// toast.info(`getting client success ${key}`);
 					setWasmClients((prev) => ({
 						...prev,
@@ -90,16 +116,20 @@ const useClient = (tokens?: TokenType[]) => {
 			const { client, account } = wasmClients?.[tokenStatus.chain] || {};
 			if (connectedWallet && client && account) {
 				// setHasErrorOnMobileConnection(false);
-				const balance = await client.getBalance(
-					account.address,
-					tokenStatus.isNativeCoin
-						? chainConfig.microDenom
-						: tokenStatus.denom || ""
-				);
-				setIBCNativeTokenBalance((prev) => ({
-					...prev,
-					[token]: balance,
-				}));
+				try {
+					const balance = await client.getBalance(
+						account.address,
+						tokenStatus.isNativeCoin
+							? chainConfig.microDenom
+							: tokenStatus.denom || ""
+					);
+					setIBCNativeTokenBalance((prev) => ({
+						...prev,
+						[token]: balance,
+					}));
+				} catch (e) {
+					console.log("debug error", e);
+				}
 				// else {
 				// 	setHasErrorOnMobileConnection(true);
 				// }
@@ -111,6 +141,13 @@ const useClient = (tokens?: TokenType[]) => {
 	useEffect(() => {
 		if (!tokens) return;
 		for (const token of tokens) {
+			if (window.keplr) {
+				const chain = TokenStatus[token].chain;
+				const chainConfig = ChainConfigs[chain];
+				window.keplr.experimentalSuggestChain(
+					getChainConfig(chainConfig)
+				);
+			}
 			getBalance(token);
 		}
 	}, [getBalance, tokens]);

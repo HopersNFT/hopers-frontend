@@ -6,6 +6,7 @@ export enum TokenType {
 	ATOM = "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
 	USDC = "ibc/EAC38D55372F38F1AFD68DF7FE9EF762DCF69F26520643CF3F9D292A738D8034",
 	OSMO = "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
+	EVMOS = "ibc/9B990F95D85E7CA8C46544975776CAA20A3DEE3507EEA829A4000D8D65617F6D",
 	MARS = "ibc/281FEE887CDF71EB9C1FEFC554822DCB06BE4E8A8BFF944ED64E3D03437E9384",
 	KUJIRA = "ibc/7F7D3698E2E3484D576001608BB84D13F5C8B02B97359716ECC60A29A7523BF3",
 	STARS = "ibc/F6B367385300865F654E110976B838502504231705BAC0849B0651C226385885",
@@ -25,6 +26,13 @@ export enum TokenType {
 	DRGN = "drgn",
 	BANANA = "banana",
 	CZAR = "czar",
+	HOWL = "howl",
+	KLEO = "kleo",
+	JAPE = "jape",
+	HARBOR = "ibc/2D8FA8721F44AE790D2A4D07775C16DD275B6FD83DA6FF29E76FED5BB6A92764",
+	CMDX = "ibc/946AD96F278770521526D7283F58268DA2F6ACDDE40324A9D1C86811D78C86A0",
+	CMST = "ibc/DD057BB58DCBEE8F7C0CDF0B9AE4A2656B00E3C9745341180400B60833EEC9FD",
+	// PLANQ = "ibc/9AFC3B24C30BE40250D3F40818CFED98C74EA320F744AA6CF2129F0D109E6FF5",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -57,6 +65,14 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.KUJIRA]: "KUJI",
 	[TokenType.STARS]: "STARS",
 	[TokenType.MARS]: "MARS",
+	[TokenType.HOWL]: "HOWL",
+	[TokenType.KLEO]: "KLEO",
+	[TokenType.JAPE]: "JAPE",
+	// [TokenType.PLANQ]: "PLANQ",
+	[TokenType.EVMOS]: "EVMOS",
+	[TokenType.HARBOR]: "HARBOR",
+	[TokenType.CMDX]: "CMDX",
+	[TokenType.CMST]: "CMST",
 };
 
 export type TokenStatusType = {
@@ -232,6 +248,61 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		isIBCCoin: true,
 		chain: ChainTypes.MARS,
 		originChain: ChainTypes.MARS,
+	},
+	[TokenType.HOWL]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno1g0wuyu2f49ncf94r65278puxzclf5arse9f3kvffxyv4se4vgdmsk4dvqz",
+	},
+	[TokenType.KLEO]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno10gthz5ufgrpuk5cscve2f0hjp56wgp90psqxcrqlg4m9mcu9dh8q4864xy",
+	},
+	[TokenType.JAPE]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno1zkwveux7y6fmsr88atf3cyffx96p0c96qr8tgcsj7vfnhx7sal3s3zu3ps",
+	},
+	// [TokenType.PLANQ]: {
+	// 	isNativeCoin: true,
+	// 	isIBCCoin: true,
+	// 	chain: ChainTypes.PLANQ,
+	// 	originChain: ChainTypes.PLANQ,
+	// 	decimal: 18,
+	// },
+	[TokenType.EVMOS]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.EVMOS,
+		originChain: ChainTypes.EVMOS,
+		decimal: 18,
+	},
+	[TokenType.HARBOR]: {
+		isNativeCoin: false,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+		denom: "uharbor",
+	},
+	[TokenType.CMDX]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+	},
+	[TokenType.CMST]: {
+		isNativeCoin: false,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+		denom: "ucmst",
 	},
 };
 

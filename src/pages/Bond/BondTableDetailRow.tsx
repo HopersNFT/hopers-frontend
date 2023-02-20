@@ -45,7 +45,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 		CosmostationWalletContext
 	);
 	const { runExecute } = useContract();
-	const { refresh } = useRefresh();
+	const { refreshPrice } = useRefresh();
 	const history = useHistory();
 	const { suggestToken } = useKeplr();
 
@@ -134,7 +134,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 				withdraw: {},
 			});
 			toast.success("Successfully claimed!");
-			refresh();
+			refreshPrice();
 		} catch (err) {
 			console.log(err);
 			toast.error("Claim Failed!");
@@ -179,7 +179,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 						cursor="pointer"
 						onClick={() =>
 							window.open(
-								`https://mintscan.io/juno/account/${rowData.contract}`
+								`https://mintscan.io/juno/wasm/contract/${rowData.contract}`
 							)
 						}
 					>
