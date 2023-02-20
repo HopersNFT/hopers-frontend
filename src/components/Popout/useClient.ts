@@ -94,6 +94,7 @@ const useClient = (tokens?: TokenType[]) => {
 				try {
 					// toast.info(`getting client start ${key}`);
 					const client = await getClient(chain);
+
 					// toast.info(`getting client success ${key}`);
 					setWasmClients((prev) => ({
 						...prev,
@@ -114,16 +115,20 @@ const useClient = (tokens?: TokenType[]) => {
 			const { client, account } = wasmClients?.[tokenStatus.chain] || {};
 			if (connectedWallet && client && account) {
 				// setHasErrorOnMobileConnection(false);
-				const balance = await client.getBalance(
-					account.address,
-					tokenStatus.isNativeCoin
-						? chainConfig.microDenom
-						: tokenStatus.denom || ""
-				);
-				setIBCNativeTokenBalance((prev) => ({
-					...prev,
-					[token]: balance,
-				}));
+				try {
+					const balance = await client.getBalance(
+						account.address,
+						tokenStatus.isNativeCoin
+							? chainConfig.microDenom
+							: tokenStatus.denom || ""
+					);
+					setIBCNativeTokenBalance((prev) => ({
+						...prev,
+						[token]: balance,
+					}));
+				} catch (e) {
+					console.log("debug error", e);
+				}
 				// else {
 				// 	setHasErrorOnMobileConnection(true);
 				// }
