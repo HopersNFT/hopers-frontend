@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import ExploreHeader from "../../components/ExploreHeader";
 import PageWrapper from "../../components/PageWrapper";
 import PoolImage from "../../components/PoolImage";
 import PoolName from "../../components/PoolName";
-import { CancelIcon, VerifiedBadge } from "../../components/SvgIcons";
 import Table, { ColumnTypes, TColumns } from "../../components/Table";
 import Text from "../../components/Text";
 import { TPool, TPoolConfig } from "../../types/pools";
@@ -46,6 +45,7 @@ const BalanceItem = ({
 );
 
 const Bond: React.FC = () => {
+	const [selectedTab, setSelectedTab] = useState<string>(PoolType.INCENTIVIZED);
 	const liquidities = useAppSelector((state) => state.liquidities);
 	const { search } = useLocation();
 	const poolId = new URLSearchParams(search).get("poolId");
@@ -78,12 +78,6 @@ const Bond: React.FC = () => {
 					: -1;
 			},
 			render: (value: any, data: TPool) => <PoolName pool={data} />,
-		},
-		{
-			name: "isVerified",
-			title: "Verified",
-			render: (value, data) =>
-				value ? <VerifiedBadge /> : <CancelIcon />,
 		},
 		{
 			name: "bonded",
@@ -233,7 +227,19 @@ const Bond: React.FC = () => {
 				</Text>
 				<Table<TPool>
 					data={liquidities.filter(
-						(liquidity) => !!liquidity.stakingAddress
+						(liquidity) =>
+							{
+								switch(selectedTab){
+									case PoolType.INCENTIVIZED:
+										return !!liquidity.stakingAddress;
+									case PoolType.MYPOOL:
+										return !!liquidity.balance || 
+												((typeof liquidity.bonded  === "number") && !!liquidity.bonded) ||
+												((liquidity.bonded as number[]) && (liquidity.bonded as number[])?.find(x => x > 0))
+									default:
+										return false;
+								}
+							}
 					)}
 					columns={Columns}
 					defaultExpanded={(rowData) =>
@@ -252,7 +258,8 @@ const Bond: React.FC = () => {
 								Object.keys(PoolType) as Array<
 									keyof typeof PoolType
 								>
-							).map((key) => PoolType[key]),
+							).filter(x => x !== "ALL").map((key) => PoolType[key]),
+							onClick: (tab) => setSelectedTab(tab),
 						},
 						search: {
 							onChange: (searchValue, liquidities) =>

@@ -26,7 +26,7 @@ const Table = <T extends object>({
 	defaultExpanded,
 }: TTable<T>) => {
 	const pageSize = 15;
-	
+
 	const [sortDirections, setSortDirections] = useState<TSortDirection>(
 		{} as TSortDirection
 	);
@@ -90,6 +90,10 @@ const Table = <T extends object>({
 	);
 
 	const sortedData = useMemo(() => {
+		let tmp = {...paginator};
+		tmp.pagesRange = calculateRange();
+		tmp.currentPage = tmp.pagesRange.length <= tmp.currentPage ? 0 : tmp.currentPage;
+		setPaginatorValue(tmp);
 		if (!sortDirections?.field) return searchedData;
 		const sortedColumn = columns.find((column) =>
 			((column?.name || column?.title || "") as string).includes(
@@ -98,6 +102,7 @@ const Table = <T extends object>({
 		);
 		
 		if (!sortedColumn || !sortedColumn.sort) return searchedData;
+		
 		return searchedData.sort((data1, data2) => {
 			const defaultValue = sortedColumn.type === ColumnTypes.NUMBER ? 0 : "";
 			const value1 = sortedColumn.name
@@ -106,6 +111,7 @@ const Table = <T extends object>({
 			const value2 = sortedColumn.name
 				? data2[sortedColumn.name] || defaultValue
 				: defaultValue;
+				
 			if (typeof sortedColumn.sort === "boolean") {
 				return sortDirections.direction === "up"
 					? value1 > value2
@@ -119,6 +125,7 @@ const Table = <T extends object>({
 				? sortedColumn.sort(data1, data2, sortDirections.direction)
 				: 0;
 		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [columns, searchedData, sortDirections]);
 
 	const paginatedData = useMemo(() => {
