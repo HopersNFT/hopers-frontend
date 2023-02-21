@@ -249,7 +249,8 @@ const Liquidity: React.FC = () => {
 			render: (value, data) => {
 				const apr = data.apr;
 				if (typeof apr === "string") {
-					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
+					const rewardToken = (data.config as TPoolConfig)
+						?.rewardToken;
 					return (
 						<Text gap="10px" color="black" alignItems="center" 
 							flexWrap="nowrap"
@@ -258,7 +259,10 @@ const Liquidity: React.FC = () => {
 							<img
 									width={25}
 									alt=""
-									src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
+									src={`/coin-images/${rewardToken.replace(
+										/\//g,
+										""
+									)}.png`}
 								/>
 							)}
 							{apr}
@@ -268,8 +272,9 @@ const Liquidity: React.FC = () => {
 					return (
 						<Flex alignItems="center" gap="10px" flexDirection="column">
 							{apr.map((item, index) => {
-								const rewardToken = (data.config as TPoolConfig[])?.[index]
-									?.rewardToken;
+								const rewardToken = (
+									data.config as TPoolConfig[]
+								)?.[index]?.rewardToken;
 								return (
 									<Text
 										key={index}
@@ -574,7 +579,9 @@ const Liquidity: React.FC = () => {
 								Connect to a wallet to view your liquidity
 							</MessageContainer>
 						</ListBody>
-						<ConnectWalletButton onClick={handleClickConnectWalletButton}>
+						<ConnectWalletButton
+							onClick={handleClickConnectWalletButton}
+						>
 							Connect Wallet
 						</ConnectWalletButton>
 					</LiquidityList>
@@ -632,7 +639,9 @@ const Liquidity: React.FC = () => {
 							tab: {
 								defaultSelected: PoolType.INCENTIVIZED as string,
 								tabs: (
-									Object.keys(PoolType) as Array<keyof typeof PoolType>
+									Object.keys(PoolType) as Array<
+										keyof typeof PoolType
+									>
 								).map((key) => PoolType[key]),
 								onClick: (tab) => setSelectedTab(tab),
 							},
@@ -643,10 +652,14 @@ const Liquidity: React.FC = () => {
 											!searchValue ||
 											liquidity.token1
 												.toLowerCase()
-												.includes(searchValue.toLowerCase()) ||
+												.includes(
+													searchValue.toLowerCase()
+												) ||
 											liquidity.token2
 												.toLowerCase()
-												.includes(searchValue.toLowerCase())
+												.includes(
+													searchValue.toLowerCase()
+												)
 									),
 							},
 						}}
