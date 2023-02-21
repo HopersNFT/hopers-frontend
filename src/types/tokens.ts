@@ -9,8 +9,11 @@ export enum TokenType {
 	EVMOS = "ibc/9B990F95D85E7CA8C46544975776CAA20A3DEE3507EEA829A4000D8D65617F6D",
 	MARS = "ibc/281FEE887CDF71EB9C1FEFC554822DCB06BE4E8A8BFF944ED64E3D03437E9384",
 	KUJIRA = "ibc/7F7D3698E2E3484D576001608BB84D13F5C8B02B97359716ECC60A29A7523BF3",
+	CMDX = "ibc/946AD96F278770521526D7283F58268DA2F6ACDDE40324A9D1C86811D78C86A0",
 	STARS = "ibc/F6B367385300865F654E110976B838502504231705BAC0849B0651C226385885",
 	HUAHUA = "ibc/D836B191CDAE8EDACDEBE7B64B504C5E06CC17C6A072DAF278F9A96DF66F6241",
+	CMST = "ibc/DD057BB58DCBEE8F7C0CDF0B9AE4A2656B00E3C9745341180400B60833EEC9FD",
+	HARBOR = "ibc/2D8FA8721F44AE790D2A4D07775C16DD275B6FD83DA6FF29E76FED5BB6A92764",
 	HOPE = "hope",
 	NETA = "neta",
 	PUNK = "punk",
@@ -67,6 +70,9 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.JAPE]: "JAPE",
 	// [TokenType.PLANQ]: "PLANQ",
 	[TokenType.EVMOS]: "EVMOS",
+	[TokenType.HARBOR]: "HARBOR",
+	[TokenType.CMDX]: "CMDX",
+	[TokenType.CMST]: "CMST",
 };
 
 export type TokenStatusType = {
@@ -277,6 +283,26 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.EVMOS,
 		originChain: ChainTypes.EVMOS,
 		decimal: 18,
+	},
+	[TokenType.HARBOR]: {
+		isNativeCoin: false,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+		denom: "uharbor",
+	},
+	[TokenType.CMDX]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+	},
+	[TokenType.CMST]: {
+		isNativeCoin: false,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+		denom: "ucmst",
 	},
 };
 
