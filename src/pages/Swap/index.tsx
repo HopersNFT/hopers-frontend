@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { coins } from "@cosmjs/proto-signing";
 import { useAppSelector } from "../../app/hooks";
-import ExploreHeader from "../../components/ExploreHeader";
 import PageWrapper from "../../components/PageWrapper";
 import {
 	DropDownIcon,
@@ -453,13 +452,6 @@ const Swap: React.FC = () => {
 
 	return (
 		<PageWrapper>
-			<ExploreHeader
-				title="Swap"
-				tabs={[
-					{ title: "Swap", url: "/swap" },
-					{ title: "Liquidity", url: "/liquidity" },
-				]}
-			/>
 			<Wrapper>
 				<MainPart>
 					<SwapArea>
