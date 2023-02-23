@@ -58,7 +58,7 @@ const Tranfer: React.FC = () => {
 					className="container"
 				>
 					<div className="transfer-title">
-						<div>Tranfer</div>
+						<div>Transfer</div>
 						<div>From official third part dApps</div>
 					</div>
 					<div className="transfer-assets-wrapper">
