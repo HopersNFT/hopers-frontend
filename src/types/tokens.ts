@@ -4,6 +4,7 @@ export enum TokenType {
 	HOPERS = "hopers",
 	JUNO = "ujuno",
 	ATOM = "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+	ETH = "ibc/95A45A81521EAFDBEDAEEB6DA975C02E55B414C95AD3CE50709272366A90CA17",
 	USDC = "ibc/EAC38D55372F38F1AFD68DF7FE9EF762DCF69F26520643CF3F9D292A738D8034",
 	OSMO = "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
 	EVMOS = "ibc/9B990F95D85E7CA8C46544975776CAA20A3DEE3507EEA829A4000D8D65617F6D",
@@ -73,6 +74,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.HARBOR]: "HARBOR",
 	[TokenType.CMDX]: "CMDX",
 	[TokenType.CMST]: "CMST",
+	[TokenType.ETH]: "WEHT",
 };
 
 export type TokenStatusType = {
@@ -303,6 +305,14 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.COMDEX,
 		originChain: ChainTypes.COMDEX,
 		denom: "ucmst",
+	},
+	[TokenType.ETH]: {
+		isNativeCoin: false,
+		isIBCCoin: true,
+		chain: ChainTypes.AXELAR,
+		originChain: ChainTypes.AXELAR,
+		denom: "weth-wei",
+		decimal: 18,
 	},
 };
 
