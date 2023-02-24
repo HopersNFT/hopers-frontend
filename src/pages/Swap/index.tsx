@@ -38,6 +38,7 @@ import useDexStatus from "../../hook/useDexStatus";
 import Flex from "../../components/Flex";
 import { ThemeContext } from "../../context/ThemeContext";
 import { useLocation } from "react-router-dom";
+import ExploreHeader from "../../components/ExploreHeader";
 
 type TSwapInfo = {
 	from: {
@@ -454,6 +455,13 @@ const Swap: React.FC = () => {
 
 	return (
 		<PageWrapper>
+			<ExploreHeader
+				title="Swap"
+				tabs={[
+					{ title: "Swap", url: "/swap" },
+					{ title: "Liquidity", url: "/liquidity" },
+				]}
+			/>
 			<Wrapper>
 				<MainPart>
 					<SwapArea>

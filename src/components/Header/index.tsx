@@ -88,24 +88,24 @@ const HeaderLinks = [
 		title: "Swap",
 		icon: SwapIcon,
 		url: "/swap",
-		selectedUrl: ["/swap"]
-	},
-	{
-		title: "Earn",
-		url: "/liquidity",
-		selectedUrl: ["/liquidity", "/stake", "/airdrop"],
+		selectedUrl: ["/swap", "/liquidity"],
 		children: [
+			{
+				title: "Swap",
+				url: "/swap",
+				icon: SwapIcon,
+			},
 			{
 				title: "Liquidity",
 				url: "/liquidity",
-				icon: EarnIcon,
-			},
-			{
-				title: "Stake",
-				url: "/stake",
-				icon: EarnIcon,
+				icon: SwapIcon,
 			}
-		],
+		]
+	},
+	{
+		title: "Earn",
+		url: "/bond",
+		selectedUrl: ["/bond", "/stake", "/airdrop"],
 		icon: EarnIcon,
 	},
 	{

@@ -40,7 +40,7 @@ const Stake: React.FC = () => {
 			<ExploreHeader
 				title="Stake"
 				tabs={[
-					{ title: "Liquidity", url: "/liquidity" },
+					{ title: "Bond", url: "/bond" },
 					{ title: "Stake", url: "/stake" },
 					// { title: "Airdrop", url: "/airdrop" },
 				]}

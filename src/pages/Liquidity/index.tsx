@@ -541,8 +541,8 @@ const Liquidity: React.FC = () => {
 			<ExploreHeader
 				title="Liquidity"
 				tabs={[
+					{ title: "Swap", url: "/swap" },
 					{ title: "Liquidity", url: "/liquidity" },
-					{ title: "Stake", url: "/stake" },
 				]}
 			/>
 			<Wrapper ref={(node) => setWrapperElement(node)}>
