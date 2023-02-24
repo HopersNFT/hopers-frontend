@@ -55,7 +55,7 @@ import Collections, {
 } from "../../constants/Collections";
 import useMatchBreakpoints from "../../hook/useMatchBreakpoints";
 import { TokenStatus, TokenType, TokenFullName } from "../../types/tokens";
-import usePopoutQuickSwap, { SwapType } from "../../components/Popout";
+import { usePopoutQuickSwap, SwapType } from "../../components/Popout";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { Tabs } from "./styled";
 import SearchInputer from "../../components/SearchInputer";
@@ -73,6 +73,8 @@ import usePickNFT from "../../hook/usePickNFT";
 import useHandleNftItem from "../../hook/useHandleNftItem";
 import MyPools from "../../components/MyPools";
 // import { getCustomTokenId } from "../../hook/useFetch";
+import { usePopoutTransfer } from "../../components/Popout/Transfer";
+import { addSuffix } from "../../util/string";
 
 enum TAB_TYPE {
 	ITEMS = "NFTs",
@@ -141,6 +143,7 @@ const MyNFT: React.FC = () => {
 	const { pickNFTByTokenId } = usePickNFT();
 	const { acceptBid, withdrawBid } = useHandleNftItem();
 	const popoutQuickSwap = usePopoutQuickSwap();
+	const popoutTranfer = usePopoutTransfer();
 	const { isDark } = useContext(ThemeContext);
 	const isMobile = isXs || isSm || isMd;
 	const nfts = useAppSelector((state) => state.nfts);
@@ -620,15 +623,11 @@ const MyNFT: React.FC = () => {
 										<TokenBalance>{key}</TokenBalance>
 									</CoinIconWrapper>
 									<TokenBalance>
-										{tokenBalance.toLocaleString("en-US", {
-											maximumFractionDigits: 3,
-										})}
+										{addSuffix(tokenBalance)}
 										<Text style={{ fontSize: "0.8em" }}>
-											{`${(
+											{`${addSuffix(
 												tokenBalance * tokenPrice
-											).toLocaleString("en-US", {
-												maximumFractionDigits: 3,
-											})}$`}
+											)}$`}
 										</Text>
 									</TokenBalance>
 								</TokenBalanceItem>
@@ -659,6 +658,11 @@ const MyNFT: React.FC = () => {
 							}
 						>
 							Withdraw
+						</IBCDepositWithdrawButton>
+						<IBCDepositWithdrawButton
+							onClick={() => popoutTranfer()}
+						>
+							Transfer
 						</IBCDepositWithdrawButton>
 					</IBCDepositWithdrawButtons>
 				</TokenTypeString>
@@ -704,15 +708,11 @@ const MyNFT: React.FC = () => {
 										</TokenBalance>
 									</CoinIconWrapper>
 									<TokenBalance>
-										{tokenBalance.toLocaleString("en-US", {
-											maximumFractionDigits: 3,
-										})}
+										{addSuffix(tokenBalance)}
 										<Text style={{ fontSize: "0.9em" }}>
-											{`${(
+											{`${addSuffix(
 												tokenBalance * tokenPrice
-											).toLocaleString("en-US", {
-												maximumFractionDigits: 3,
-											})}$`}
+											)}$`}
 										</Text>
 									</TokenBalance>
 									{/* <WithdrawButton

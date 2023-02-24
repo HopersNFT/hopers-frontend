@@ -52,7 +52,9 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 	}, [history, pool]);
 
 	useEffect(() => {
-		const targetPool = liquidities.find((pool) => pool.id === Number(poolId));
+		const targetPool = liquidities.find(
+			(pool) => pool.id === Number(poolId)
+		);
 		if (targetPool) {
 			setPool(targetPool);
 			setAddAmount({} as TAddAmount);
@@ -120,17 +122,24 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 
 		let funds: any[] = [];
 
-		if (!TokenStatus[pool.token1].isIBCCoin && !TokenStatus[pool.token1].isNativeCoin) {
+		if (
+			!TokenStatus[pool.token1].isIBCCoin &&
+			!TokenStatus[pool.token1].isNativeCoin
+		) {
 			transactions.push(
 				createExecuteMessage({
 					senderAddress: account.address,
-					contractAddress: TokenStatus[pool.token1].contractAddress || "",
+					contractAddress:
+						TokenStatus[pool.token1].contractAddress || "",
 					message: {
 						increase_allowance: {
 							spender: pool.contract,
 							amount: `${Math.ceil(
 								token1Amount *
-									Math.pow(10, TokenStatus[pool.token1].decimal || 6)
+									Math.pow(
+										10,
+										TokenStatus[pool.token1].decimal || 6
+									)
 							)}`,
 						},
 					},
@@ -142,23 +151,34 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 				...coins(
 					toMicroAmount(
 						"" + token1Amount,
-						ChainConfigs[TokenStatus[pool.token1].chain]["coinDecimals"]
+						"" +
+							(TokenStatus[pool.token2].decimal ||
+								ChainConfigs[TokenStatus[pool.token1].chain][
+									"coinDecimals"
+								])
 					),
 					pool.token1
 				),
 			];
 		}
-		if (!TokenStatus[pool.token2].isIBCCoin && !TokenStatus[pool.token2].isNativeCoin) {
+		if (
+			!TokenStatus[pool.token2].isIBCCoin &&
+			!TokenStatus[pool.token2].isNativeCoin
+		) {
 			transactions.push(
 				createExecuteMessage({
 					senderAddress: account.address,
-					contractAddress: TokenStatus[pool.token2].contractAddress || "",
+					contractAddress:
+						TokenStatus[pool.token2].contractAddress || "",
 					message: {
 						increase_allowance: {
 							spender: pool.contract,
 							amount: `${Math.ceil(
 								token2Amount *
-									Math.pow(10, TokenStatus[pool.token2].decimal || 6)
+									Math.pow(
+										10,
+										TokenStatus[pool.token2].decimal || 6
+									)
 							)}`,
 						},
 					},
@@ -170,7 +190,11 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 				...coins(
 					toMicroAmount(
 						"" + token2Amount,
-						ChainConfigs[TokenStatus[pool.token2].chain]["coinDecimals"]
+						"" +
+							(TokenStatus[pool.token2].decimal ||
+								ChainConfigs[TokenStatus[pool.token2].chain][
+									"coinDecimals"
+								])
 					),
 					pool.token2
 				),
@@ -187,14 +211,20 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 							"" +
 							Math.ceil(
 								token1Amount *
-									Math.pow(10, TokenStatus[pool.token1].decimal || 6)
+									Math.pow(
+										10,
+										TokenStatus[pool.token1].decimal || 6
+									)
 							),
 						min_liquidity: "0",
 						max_token2:
 							"" +
 							Math.ceil(
 								token2Amount *
-									Math.pow(10, TokenStatus[pool.token2].decimal || 6)
+									Math.pow(
+										10,
+										TokenStatus[pool.token2].decimal || 6
+									)
 							),
 					},
 				},
@@ -204,10 +234,14 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 
 		try {
 			const client = await getExecuteClient();
-			await client.signAndBroadcast(account.address, transactions, "auto");
+			await client.signAndBroadcast(
+				account.address,
+				transactions,
+				"auto"
+			);
 			toast.success("Added Liquidity Successfully!");
 		} catch (err) {
-			console.log(err);
+			console.log("debug", err);
 			toast.error("Add Liquidity Failed");
 		} finally {
 			setIsPending(false);
@@ -237,17 +271,26 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 				key={index}
 				selectOption={selectOption}
 				option={option}
-				checked={option.token1 === pool.token1 && option.token2 === pool.token2}
+				checked={
+					option.token1 === pool.token1 &&
+					option.token2 === pool.token2
+				}
 			/>
 		));
 	};
 
-	const CustomPoolItem = ({ children, ...props }: ControlProps<any, false>) => {
+	const CustomPoolItem = ({
+		children,
+		...props
+	}: ControlProps<any, false>) => {
 		const {
 			innerProps: { onMouseDown, onTouchEnd },
 		} = props;
 		return (
-			<SelectPoolContainer onMouseDown={onMouseDown} onTouchEnd={onTouchEnd}>
+			<SelectPoolContainer
+				onMouseDown={onMouseDown}
+				onTouchEnd={onTouchEnd}
+			>
 				<CustomPoolSelectItem option={pool} />
 				{children}
 			</SelectPoolContainer>
@@ -257,7 +300,12 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 	return (
 		<LiquidityList>
 			<ListHeader>
-				<Text justifyContent="flex-start" color="black" bold fontSize="20px">
+				<Text
+					justifyContent="flex-start"
+					color="black"
+					bold
+					fontSize="20px"
+				>
 					Add Liquidity
 				</Text>
 				<Text justifyContent="flex-start" color="black">
@@ -337,7 +385,9 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 						/>
 					</Flex>
 					<AddRemoveLiquidityFooter>
-						<AddRemoveLiquidityActionButton onClick={handleAddLiquidity}>
+						<AddRemoveLiquidityActionButton
+							onClick={handleAddLiquidity}
+						>
 							{`${isPending ? "Adding" : "Add"} Liquidity`}
 						</AddRemoveLiquidityActionButton>
 					</AddRemoveLiquidityFooter>

@@ -368,9 +368,11 @@ const Swap: React.FC = () => {
 			funds = coins(
 				toMicroAmount(
 					"" + swapInfo.from.amount,
-					ChainConfigs[TokenStatus[swapInfo.from.token].chain][
-						"coinDecimals"
-					]
+					"" +
+						(TokenStatus[swapInfo.from.token].decimal ||
+							ChainConfigs[
+								TokenStatus[swapInfo.from.token].chain
+							]["coinDecimals"])
 				),
 				swapInfo.from.token
 				// ChainConfigs[TokenStatus[swapInfo.from.token].chain]["microDenom"]
