@@ -89,3 +89,10 @@ sl-divider {
 *:focus {
     outline: none;
 }
+
+.fixed-top-tooltip::before{
+    height: 0px !important;
+}
+.fixed-top-tooltip::after{
+    height: 10px !important;
+}

@@ -351,6 +351,7 @@ const Bond: React.FC = () => {
 										<ReactTooltip
 											id="tooltip-claim"
 											place="top"
+											class="fixed-top-tooltip"
 										>
 											Claim rewards
 										</ReactTooltip>
@@ -412,6 +413,7 @@ const Bond: React.FC = () => {
 						<ReactTooltip
 							id="tooltip-manage"
 							place="top"
+							class="fixed-top-tooltip"
 						>
 							Manage liquidity
 						</ReactTooltip>
