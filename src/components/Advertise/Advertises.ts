@@ -2,6 +2,11 @@ import { AdvertiseItemProps } from ".";
 
 export const Advertise1: AdvertiseItemProps[] = [
 	{
+		url: "/advertises-images/image_011.png",
+		description: 
+			"#ETHEREUM has officially landed on Hopers.io, paving the way for the future of #DeFi."
+	},
+	{
 		url: "/advertises-images/image_010.png",
 		description: 
 			"The first #IBC-compatible EVM-based chain, $EVMOS, is now available for the first time on $JUNO ☄️"
@@ -10,11 +15,6 @@ export const Advertise1: AdvertiseItemProps[] = [
 		url: "/advertises-images/image_008.png",
 		description:
 			"We have just listed $MARS, the new L1 credit protocol on Cosmos🛸",
-	},
-	{
-		url: "/advertises-images/image_006.png",
-		description:
-			"Thrilled to announce that we've teamed up with @PURPLE_DAO to bring u an exciting new phase of gameplay on @JunoNetwork",
 	},
 	{
 		url: "/advertises-images/image_009.png",
@@ -25,6 +25,11 @@ export const Advertise1: AdvertiseItemProps[] = [
 
 export const Advertise2: AdvertiseItemProps[] = [
 	{
+		url: "/advertises-images/image_011.png",
+		description: 
+			"#ETHEREUM has officially landed on Hopers.io, paving the way for the future of #DeFi."
+	},
+	{
 		url: "/advertises-images/image_010.png",
 		description: 
 			"The first #IBC-compatible EVM-based chain, $EVMOS, is now available for the first time on $JUNO ☄️"
@@ -33,16 +38,6 @@ export const Advertise2: AdvertiseItemProps[] = [
 		url: "/advertises-images/image_008.png",
 		description:
 			"We have just listed $MARS, the new L1 credit protocol on Cosmos🛸",
-		style: {
-			description: {
-				color: "black",
-			},
-		},
-	},
-	{
-		url: "/advertises-images/image_006.png",
-		description:
-			"Thrilled to announce that we've teamed up with @PURPLE_DAO to bring u an exciting new phase of gameplay on @JunoNetwork",
 		style: {
 			description: {
 				color: "black",
