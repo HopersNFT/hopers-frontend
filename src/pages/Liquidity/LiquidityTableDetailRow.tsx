@@ -41,7 +41,7 @@ const LiquidityTableDetailRow: React.FC<{
 						float="left"
 						onClick={() =>
 							window.open(
-								`https://mintscan.io/juno/account/${rowData.contract}`
+								`https://mintscan.io/juno/wasm/contract/${rowData.contract}`
 							)
 						}
 					>
