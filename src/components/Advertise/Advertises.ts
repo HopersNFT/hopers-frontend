@@ -2,6 +2,11 @@ import { AdvertiseItemProps } from ".";
 
 export const Advertise1: AdvertiseItemProps[] = [
     {
+        url: "/advertises-images/image_013.png",
+        description:
+            "We've added: 🕓-3 Days -7 Days unbonding periods on $ATOM $JUNO and $USDC pools.",
+    },
+    {
         url: "/advertises-images/image_012.png",
         description:
             "We're proud to announce that #BITCOIN  is joining our DEX for the first time ever powered by @axelarcore!",
@@ -29,6 +34,11 @@ export const Advertise1: AdvertiseItemProps[] = [
 ];
 
 export const Advertise2: AdvertiseItemProps[] = [
+    {
+        url: "/advertises-images/image_013.png",
+        description:
+            "We've added: 🕓-3 Days -7 Days unbonding periods on $ATOM $JUNO and $USDC pools.",
+    },
     {
         url: "/advertises-images/image_012.png",
         description:
