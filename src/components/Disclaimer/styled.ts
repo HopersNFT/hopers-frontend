@@ -5,7 +5,7 @@ import Text from "../Text";
 import ToggleButton from "../ToggleButton";
 
 export const StyledModal = Modal.styled`
-	background: white;
+	background: ${({ theme }: any) => theme.colors.backgroundColor};
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -26,6 +26,7 @@ export const StyledModal = Modal.styled`
 export const StyledToggleButton = styled(ToggleButton)`
     margin: 8px;
     align-self: center;
+    color: ${({ theme }: any) => theme.colors.fontColor};
 `;
 export const StyledButton = styled(Button)`
     margin: 16px 0px;
@@ -40,6 +41,7 @@ export const StyledText = styled(Text)`
     border-bottom: 3px solid #02e296;
     width: calc(100% - 16px);
     padding: 8px;
+    color: ${({ theme }: any) => theme.colors.fontColor};
 `;
 export const Divider = styled.div`
     margin: 12px;
@@ -47,5 +49,4 @@ export const Divider = styled.div`
 
 export const SectionTitle = styled(Text)`
     margin: 0px 4px 8px 0px;
-    color: black;
 `;
