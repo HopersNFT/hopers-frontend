@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useTheme } from "styled-components";
 import { DisclaimerAgreementLocalStorageKey } from "../../constants/BasicTypes";
 import Text from "../Text";
 import {
@@ -14,7 +13,6 @@ import {
 const Disclaimer: React.FC = () => {
     const [showDisclaimer, setShowDisclaimer] = useState(true);
     const [accepted, setAccepted] = useState(false);
-    const theme = useTheme();
 
     useEffect(() => {
         if (localStorage.getItem(DisclaimerAgreementLocalStorageKey)) {
@@ -31,19 +29,18 @@ const Disclaimer: React.FC = () => {
         <>
             {showDisclaimer ? (
                 <StyledModal
-                    theme={theme}
                     isOpen={showDisclaimer}
                     afterOpen={() => (document.body.style.overflow = "hidden")}
                     afterClose={() => (document.body.style.overflow = "unset")}
                 >
-                    <StyledText theme={theme} bold fontSize="2em">
+                    <StyledText color="black" bold fontSize="2em">
                         Disclaimer
                     </StyledText>
                     <Divider></Divider>
                     <SectionTitle fontSize="1.1em" bold>
                         No Investment Advice
                     </SectionTitle>
-                    <Text>
+                    <Text color="black">
                         The information provided on this website does not
                         constitute investment advice, financial advice, trading
                         advice, or any other sort of advice and you should not
@@ -57,7 +54,7 @@ const Disclaimer: React.FC = () => {
                     <SectionTitle fontSize="1.1em" bold>
                         Accuracy of Information
                     </SectionTitle>
-                    <Text>
+                    <Text color="black">
                         Hopers.io will strive to ensure accuracy of information
                         listed on this website although it will not hold any
                         responsibility for any missing or wrong information.
@@ -69,7 +66,7 @@ const Disclaimer: React.FC = () => {
                     <SectionTitle fontSize="1.1em" bold>
                         Non Endorsement
                     </SectionTitle>
-                    <Text>
+                    <Text color="black">
                         The appearance of third party advertisements and
                         hyperlinks on Hopers.io does not constitute an
                         endorsement, guarantee, warranty, or recommendation by
