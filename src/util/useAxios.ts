@@ -8,7 +8,7 @@ import { headersType, methodType, urlType } from "../constants/BasicTypes";
 // export const BACKEND_URL = "https://hopers-backend-beige.vercel.app";
 // export const BACKEND_URL = "https://hopers-backend-v2-psi.vercel.app";
 export const BACKEND_URL =
-  "https://hopers-backend-v2-git-dev-hopers-v2.vercel.app/"; //for dev branch
+  "https://hopers-backend-v2-git-dev-hopers-v2.vercel.app"; //for dev branch
 
 const subQueryUrl = "https://api.subquery.network/sq/VenusDev0725/hoperswap";
 
