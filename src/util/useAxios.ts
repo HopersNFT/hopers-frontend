@@ -1,16 +1,16 @@
-import axios from "axios";
-import { headersType, methodType, urlType } from "../constants/BasicTypes";
+import axios from 'axios';
+import { headersType, methodType, urlType } from '../constants/BasicTypes';
 
 // export const BACKEND_URL = "http://localhost:5000";
 // export const BACKEND_URL = "https://hackerlist-backend.vercel.app";
 // export const BACKEND_URL = "https://api.hopers.io";
 // export const BACKEND_URL = "https://proxy-backend.vercel.app";
 // export const BACKEND_URL = "https://hopers-backend-beige.vercel.app";
-// export const BACKEND_URL = "https://hopers-backend-v2-psi.vercel.app";
-export const BACKEND_URL =
-  "https://hopers-backend-v2-git-dev-hopers-v2.vercel.app"; //for dev branch
+export const BACKEND_URL = 'https://hopers-backend-v2-psi.vercel.app';
+// export const BACKEND_URL =
+//   "https://hopers-backend-v2-git-dev-hopers-v2.vercel.app"; //for dev branch
 
-const subQueryUrl = "https://api.subquery.network/sq/VenusDev0725/hoperswap";
+const subQueryUrl = 'https://api.subquery.network/sq/VenusDev0725/hoperswap';
 
 const fetch = ({
   method,
@@ -43,12 +43,12 @@ const getQuery = async ({
   try {
     const result = await fetch({
       url,
-      method: method || "get",
-      headers: { "content-type": "application/json" },
+      method: method || 'get',
+      headers: { 'content-type': 'application/json' },
     });
     return result.data;
   } catch (err) {
-    console.error("axios error at", url, method, err);
+    console.error('axios error at', url, method, err);
     return null;
   }
 };
