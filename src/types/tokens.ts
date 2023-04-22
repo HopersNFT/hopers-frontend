@@ -37,6 +37,7 @@ export enum TokenType {
   JAPE = "jape",
   PHMN = "phmn",
   GRDN = "grdn",
+  PEPE = "pepe",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -81,6 +82,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
   [TokenType.wBTC]: "WBTC",
   [TokenType.PHMN]: "POSTHUMAN",
   [TokenType.GRDN]: "GRDN",
+  [TokenType.PEPE]: "PEPE",
 };
 
 export type TokenStatusType = {
@@ -351,6 +353,13 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
     chain: ChainTypes.JUNO,
     contractAddress:
       "juno1xekkh27punj0uxruv3gvuydyt856fax0nu750xns99t2qcxp7xmsqwhfma",
+  },
+  [TokenType.PEPE]: {
+    isNativeCoin: false,
+    isIBCCoin: false,
+    chain: ChainTypes.JUNO,
+    contractAddress:
+      "juno1epxnvge53c4hkcmqzlxryw5fp7eae2utyk6ehjcfpwajwp48km3sgxsh9k",
   },
 };
 
