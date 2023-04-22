@@ -42,6 +42,7 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
   [TokenType.wBTC]: "wrapped-bitcoin",
   [TokenType.PHMN]: "",
   [TokenType.GRDN]: "",
+  [TokenType.PEPE]: "",
 };
 
 const CoinGeckoAPIKey = "CG-CV5rXz5JpbGcc36wL76u5gnd";
