@@ -11,14 +11,14 @@ import Text from "../../components/Text";
 import { TPool } from "../../types/pools";
 
 import {
-	AddRemoveLiquidityActionButton,
-	AddRemoveLiquidityFooter,
-	AddRemoveLiquidityWrapper,
-	LiquidityList,
-	ListBody,
-	ListHeader,
-	// SelectAddPoolItem,
-	SelectPoolContainer,
+  AddRemoveLiquidityActionButton,
+  AddRemoveLiquidityFooter,
+  AddRemoveLiquidityWrapper,
+  LiquidityList,
+  ListBody,
+  ListHeader,
+  // SelectAddPoolItem,
+  SelectPoolContainer,
 } from "./styled";
 import TokenAmountInputer from "./TokenAmountInputer";
 import { IBasicModal, ModalType, TAddAmount, THasError } from "./type";
@@ -30,372 +30,349 @@ import { toast } from "react-toastify";
 import CustomPoolSelectItem from "./CustomPoolSelectItem";
 
 const AddLiquidity: React.FC<IBasicModal> = ({
-	selectedPool,
-	onChangeModalType,
+  selectedPool,
+  onChangeModalType,
 }) => {
-	const account = useAppSelector((state) => state.accounts.keplrAccount);
-	const liquidities = useAppSelector((state) => state.liquidities);
-	const balances = useAppSelector((state) => state.balances);
-	const [isPending, setIsPending] = useState(false);
-	const [pool, setPool] = useState<TPool>(liquidities[0]);
-	const [addAmount, setAddAmount] = useState<TAddAmount>({} as TAddAmount);
-	const [hasAmountError, setHasAmountError] = useState<THasError>(
-		{} as THasError
-	);
-	const { createExecuteMessage, getExecuteClient } = useContract();
-	const history = useHistory();
-	const { search } = useLocation();
-	const poolId = new URLSearchParams(search).get("poolId");
+  const account = useAppSelector((state) => state.accounts.keplrAccount);
+  const liquidities = useAppSelector((state) => state.liquidities);
+  const balances = useAppSelector((state) => state.balances);
+  const [isPending, setIsPending] = useState(false);
+  const [pool, setPool] = useState<TPool>(liquidities[0]);
+  const [addAmount, setAddAmount] = useState<TAddAmount>({} as TAddAmount);
+  const [hasAmountError, setHasAmountError] = useState<THasError>(
+    {} as THasError
+  );
+  const { createExecuteMessage, getExecuteClient } = useContract();
+  const history = useHistory();
+  const { search } = useLocation();
+  const poolId = new URLSearchParams(search).get("poolId");
 
-	useEffect(() => {
-		if (!pool) history.push("/");
-	}, [history, pool]);
+  useEffect(() => {
+    if (!pool) history.push("/");
+  }, [history, pool]);
 
-	useEffect(() => {
-		const targetPool = liquidities.find(
-			(pool) => pool.id === Number(poolId)
-		);
-		if (targetPool) {
-			setPool(targetPool);
-			setAddAmount({} as TAddAmount);
-		}
-	}, [liquidities, poolId]);
+  useEffect(() => {
+    const targetPool = liquidities.find((pool) => pool.id === Number(poolId));
+    if (targetPool) {
+      setPool(targetPool);
+      setAddAmount({} as TAddAmount);
+    }
+  }, [liquidities, poolId]);
 
-	useEffect(() => {
-		if (selectedPool) {
-			setPool(selectedPool);
-			setAddAmount({} as TAddAmount);
-		}
-	}, [selectedPool]);
+  useEffect(() => {
+    if (selectedPool) {
+      setPool(selectedPool);
+      setAddAmount({} as TAddAmount);
+    }
+  }, [selectedPool]);
 
-	const handleChangePool = (item: any) => {
-		setPool(item);
-		if (addAmount.token1) {
-			setAddAmount((prev) => ({
-				...prev,
-				token2: Number(prev.token1) * (item.ratio || 0),
-			}));
-		}
-	};
+  const handleChangePool = (item: any) => {
+    setPool(item);
+    if (addAmount.token1) {
+      setAddAmount((prev) => ({
+        ...prev,
+        token2: Number(prev.token1) * (item.ratio || 0),
+      }));
+    }
+  };
 
-	const handleChangeAddAmount = (value: string, type: keyof TAddAmount) => {
-		const slippage = 0.99;
-		if (!isNaN(Number(value))) {
-			const oppositeType = type === "token1" ? "token2" : "token1";
-			const oppositeValue =
-				type === "token1"
-					? (Number(value) * pool.ratio) / slippage
-					: (Number(value) * slippage) / pool.ratio;
+  const handleChangeAddAmount = (value: string, type: keyof TAddAmount) => {
+    const slippage = 0.99;
+    if (!isNaN(Number(value))) {
+      const oppositeType = type === "token1" ? "token2" : "token1";
+      const oppositeValue =
+        type === "token1"
+          ? (Number(value) * pool.ratio) / slippage
+          : (Number(value) * slippage) / pool.ratio;
 
-			const balance =
-				(balances[pool[type]]?.amount || 0) /
-				Math.pow(10, TokenStatus[pool[type]].decimal || 6);
-			const oppositeBalance =
-				(balances[pool[oppositeType]]?.amount || 0) /
-				Math.pow(10, TokenStatus[pool[oppositeType]].decimal || 6);
+      const balance =
+        (balances[pool[type]]?.amount || 0) /
+        Math.pow(10, TokenStatus[pool[type]].decimal || 6);
+      const oppositeBalance =
+        (balances[pool[oppositeType]]?.amount || 0) /
+        Math.pow(10, TokenStatus[pool[oppositeType]].decimal || 6);
 
-			setAddAmount({
-				[type]: value,
-				[oppositeType]: oppositeValue,
-			} as TAddAmount);
-			setHasAmountError({
-				[type]: Number(value) > balance,
-				[oppositeType]: Number(oppositeValue) > oppositeBalance,
-			} as THasError);
-		}
-	};
+      setAddAmount({
+        [type]: value,
+        [oppositeType]: oppositeValue,
+      } as TAddAmount);
+      setHasAmountError({
+        [type]: Number(value) > balance,
+        [oppositeType]: Number(oppositeValue) > oppositeBalance,
+      } as THasError);
+    }
+  };
 
-	const handleAddLiquidity = async () => {
-		console.log('debug', pool)
-		if (!account || isPending) return;
-		let transactions = [];
-		let token1Amount = Number(addAmount.token1);
-		token1Amount = isNaN(token1Amount) ? 0 : token1Amount;
-		let token2Amount = Number(addAmount.token2);
-		token2Amount = isNaN(token2Amount) ? 0 : token2Amount;
+  const handleAddLiquidity = async () => {
+    console.log("debug", pool);
+    if (!account || isPending) return;
+    let transactions = [];
+    let token1Amount = Number(addAmount.token1);
+    token1Amount = isNaN(token1Amount) ? 0 : token1Amount;
+    let token2Amount = Number(addAmount.token2);
+    token2Amount = isNaN(token2Amount) ? 0 : token2Amount;
 
-		if (!token1Amount || !token2Amount) return;
-		if (hasAmountError.token1 || hasAmountError.token2) {
-			toast.error("Invalid Amount");
-			return;
-		}
-		setIsPending(true);
+    if (!token1Amount || !token2Amount) return;
+    if (hasAmountError.token1 || hasAmountError.token2) {
+      toast.error("Invalid Amount");
+      return;
+    }
+    setIsPending(true);
 
-		let funds: any[] = [];
+    let funds: any[] = [];
 
-		if (
-			!TokenStatus[pool.token1].isIBCCoin &&
-			!TokenStatus[pool.token1].isNativeCoin
-		) {
-			transactions.push(
-				createExecuteMessage({
-					senderAddress: account.address,
-					contractAddress:
-						TokenStatus[pool.token1].contractAddress || "",
-					message: {
-						increase_allowance: {
-							spender: pool.contract,
-							amount: BigInt(Math.ceil(
-								token1Amount *
-									Math.pow(
-										10,
-										TokenStatus[pool.token1].decimal || 6
-									)
-							)).toString(),
-						},
-					},
-				})
-			);
-		} else {
-			funds = [
-				...funds,
-				...coins(
-					toMicroAmount(
-						"" + token1Amount,
-						"" +
-							(TokenStatus[pool.token2].decimal ||
-								ChainConfigs[TokenStatus[pool.token1].chain][
-									"coinDecimals"
-								])
-					),
-					pool.token1
-				),
-			];
-		}
-		if (
-			!TokenStatus[pool.token2].isIBCCoin &&
-			!TokenStatus[pool.token2].isNativeCoin
-		) {
-			transactions.push(
-				createExecuteMessage({
-					senderAddress: account.address,
-					contractAddress:
-						TokenStatus[pool.token2].contractAddress || "",
-					message: {
-						increase_allowance: {
-							spender: pool.contract,
-							amount: `${Math.ceil(
-								token2Amount *
-									Math.pow(
-										10,
-										TokenStatus[pool.token2].decimal || 6
-									)
-							)}`,
-						},
-					},
-				})
-			);
-		} else {
-			funds = [
-				...funds,
-				...coins(
-					toMicroAmount(
-						"" + token2Amount,
-						"" +
-							(TokenStatus[pool.token2].decimal ||
-								ChainConfigs[TokenStatus[pool.token2].chain][
-									"coinDecimals"
-								])
-					),
-					pool.token2
-				),
-			];
-		}
+    if (
+      !TokenStatus[pool.token1].isIBCCoin &&
+      !TokenStatus[pool.token1].isNativeCoin
+    ) {
+      transactions.push(
+        createExecuteMessage({
+          senderAddress: account.address,
+          contractAddress: TokenStatus[pool.token1].contractAddress || "",
+          message: {
+            increase_allowance: {
+              spender: pool.contract,
+              amount: BigInt(
+                Math.ceil(
+                  token1Amount *
+                    Math.pow(10, TokenStatus[pool.token1].decimal || 6)
+                )
+              ).toString(),
+            },
+          },
+        })
+      );
+    } else {
+      funds = [
+        ...funds,
+        ...coins(
+          toMicroAmount(
+            "" + token1Amount,
+            "" +
+              (TokenStatus[pool.token2].decimal ||
+                ChainConfigs[TokenStatus[pool.token1].chain]["coinDecimals"])
+          ),
+          pool.token1
+        ),
+      ];
+    }
+    if (
+      !TokenStatus[pool.token2].isIBCCoin &&
+      !TokenStatus[pool.token2].isNativeCoin
+    ) {
+      transactions.push(
+        createExecuteMessage({
+          senderAddress: account.address,
+          contractAddress: TokenStatus[pool.token2].contractAddress || "",
+          message: {
+            increase_allowance: {
+              spender: pool.contract,
+              amount: `${Math.ceil(
+                token2Amount *
+                  Math.pow(10, TokenStatus[pool.token2].decimal || 6)
+              )}`,
+            },
+          },
+        })
+      );
+    } else {
+      funds = [
+        ...funds,
+        ...coins(
+          toMicroAmount(
+            "" + token2Amount,
+            "" +
+              (TokenStatus[pool.token2].decimal ||
+                ChainConfigs[TokenStatus[pool.token2].chain]["coinDecimals"])
+          ),
+          pool.token2
+        ),
+      ];
+    }
 
-		transactions.push(
-			createExecuteMessage({
-				senderAddress: account.address,
-				contractAddress: pool.contract,
-				message: {
-					add_liquidity: {
-						token1_amount:
-							"" +
-							Math.ceil(
-								token1Amount *
-									Math.pow(
-										10,
-										TokenStatus[pool.token1].decimal || 6
-									)
-							),
-						min_liquidity: "0",
-						max_token2:
-							"" +
-							Math.ceil(
-								token2Amount *
-									Math.pow(
-										10,
-										TokenStatus[pool.token2].decimal || 6
-									)
-							),
-					},
-				},
-				funds,
-			})
-		);
+    transactions.push(
+      createExecuteMessage({
+        senderAddress: account.address,
+        contractAddress: pool.contract,
+        message: {
+          add_liquidity: {
+            token1_amount:
+              "" +
+              Math.ceil(
+                token1Amount *
+                  Math.pow(10, TokenStatus[pool.token1].decimal || 6)
+              ),
+            min_liquidity: "0",
+            max_token2:
+              "" +
+              Math.ceil(
+                token2Amount *
+                  Math.pow(10, TokenStatus[pool.token2].decimal || 6)
+              ),
+          },
+        },
+        funds,
+      })
+    );
+    console.log("debug", {
+      add_liquidity: {
+        token1_amount:
+          "" +
+          Math.ceil(
+            token1Amount * Math.pow(10, TokenStatus[pool.token1].decimal || 6)
+          ),
+        min_liquidity: "0",
+        max_token2:
+          "" +
+          Math.ceil(
+            token2Amount * Math.pow(10, TokenStatus[pool.token2].decimal || 6)
+          ),
+      },
+    });
 
-		try {
-			const client = await getExecuteClient();
-			await client.signAndBroadcast(
-				account.address,
-				transactions,
-				"auto"
-			);
-			toast.success("Added Liquidity Successfully!");
-		} catch (err) {
-			console.log("debug", err);
-			toast.error("Add Liquidity Failed");
-		} finally {
-			setIsPending(false);
-		}
-	};
+    try {
+      const client = await getExecuteClient();
+      await client.signAndBroadcast(account.address, transactions, "auto");
+      toast.success("Added Liquidity Successfully!");
+    } catch (err) {
+      console.log("debug", err);
+      toast.error("Add Liquidity Failed");
+    } finally {
+      setIsPending(false);
+    }
+  };
 
-	// const CustomPoolSelectItem = ({ ...props }) => {
-	// 	const { selectOption, option, checked } = props;
-	// 	if (!option) return null;
-	// 	return (
-	// 		<SelectAddPoolItem
-	// 			onClick={() => {
-	// 				if (selectOption) selectOption(option);
-	// 			}}
-	// 			checked={checked}
-	// 		>
-	// 			<PoolImage token1={option.token1} token2={option.token2} />
-	// 			<PoolName pool={option} />
-	// 		</SelectAddPoolItem>
-	// 	);
-	// };
+  // const CustomPoolSelectItem = ({ ...props }) => {
+  // 	const { selectOption, option, checked } = props;
+  // 	if (!option) return null;
+  // 	return (
+  // 		<SelectAddPoolItem
+  // 			onClick={() => {
+  // 				if (selectOption) selectOption(option);
+  // 			}}
+  // 			checked={checked}
+  // 		>
+  // 			<PoolImage token1={option.token1} token2={option.token2} />
+  // 			<PoolName pool={option} />
+  // 		</SelectAddPoolItem>
+  // 	);
+  // };
 
-	const CustomPoolsList = (props: any) => {
-		const { options, selectOption } = props;
-		return options.map((option: any, index: number) => (
-			<CustomPoolSelectItem
-				key={index}
-				selectOption={selectOption}
-				option={option}
-				checked={
-					option.token1 === pool.token1 &&
-					option.token2 === pool.token2
-				}
-			/>
-		));
-	};
+  const CustomPoolsList = (props: any) => {
+    const { options, selectOption } = props;
+    return options.map((option: any, index: number) => (
+      <CustomPoolSelectItem
+        key={index}
+        selectOption={selectOption}
+        option={option}
+        checked={option.token1 === pool.token1 && option.token2 === pool.token2}
+      />
+    ));
+  };
 
-	const CustomPoolItem = ({
-		children,
-		...props
-	}: ControlProps<any, false>) => {
-		const {
-			innerProps: { onMouseDown, onTouchEnd },
-		} = props;
-		return (
-			<SelectPoolContainer
-				onMouseDown={onMouseDown}
-				onTouchEnd={onTouchEnd}
-			>
-				<CustomPoolSelectItem option={pool} />
-				{children}
-			</SelectPoolContainer>
-		);
-	};
+  const CustomPoolItem = ({ children, ...props }: ControlProps<any, false>) => {
+    const {
+      innerProps: { onMouseDown, onTouchEnd },
+    } = props;
+    return (
+      <SelectPoolContainer onMouseDown={onMouseDown} onTouchEnd={onTouchEnd}>
+        <CustomPoolSelectItem option={pool} />
+        {children}
+      </SelectPoolContainer>
+    );
+  };
 
-	return (
-		<LiquidityList>
-			<ListHeader>
-				<Text
-					justifyContent="flex-start"
-					color="black"
-					bold
-					fontSize="20px"
-				>
-					Add Liquidity
-				</Text>
-				<Text justifyContent="flex-start" color="black">
-					Receive LP tokens and earn trading fees
-				</Text>
-				<Text
-					className="remove-button"
-					onClick={() => onChangeModalType(ModalType.REMOVE)}
-				>
-					Remove Liquidity
-				</Text>
-			</ListHeader>
-			<ListBody>
-				<AddRemoveLiquidityWrapper>
-					<PlusInGreenCircleIcon
-						onClick={() => onChangeModalType(ModalType.CREATE)}
-					/>
-					<Text color="#787878" bold margin="5px 0">
-						CHOOSE A VALID PAIR
-					</Text>
-					<ReactSelect
-						value={pool}
-						onChange={handleChangePool}
-						options={liquidities}
-						isSearchable={false}
-						styles={{
-							container: (provided, state) => ({
-								...provided,
-								margin: "5px 10px",
-								minWidth: 100,
-								width: "100%",
-								border: "1px solid black",
-								borderRadius: "15px",
-								background: "rgba(2, 226, 150, 0.15)",
-							}),
-							indicatorsContainer: (provided, state) => ({
-								...provided,
-								padding: "10px",
-								cursor: "pointer",
-							}),
-							menu: (provided, state) => ({
-								...provided,
-								backgroundColor: "#d9fbef",
-								border: "1px solid black",
-								borderRadius: "15px",
-								boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-								overflow: "auto",
-								maxHeight: "40vh",
-								zIndex: 10,
-							}),
-						}}
-						components={{
-							MenuList: CustomPoolsList,
-							Control: CustomPoolItem,
-							DropdownIndicator: (props) => (
-								<components.DropdownIndicator {...props}>
-									<DropDownIcon fill="black" />
-								</components.DropdownIndicator>
-							),
-							IndicatorSeparator: () => null,
-						}}
-					/>
-					<Flex alignItems="center" gap="10px">
-						<TokenAmountInputer
-							token={pool?.token1}
-							amount={addAmount.token1}
-							onAmountChange={(amount) =>
-								handleChangeAddAmount(amount, "token1")
-							}
-						/>
-						<TokenAmountInputer
-							token={pool?.token2}
-							amount={addAmount.token2}
-							onAmountChange={(amount) =>
-								handleChangeAddAmount(amount, "token2")
-							}
-						/>
-					</Flex>
-					<AddRemoveLiquidityFooter>
-						<AddRemoveLiquidityActionButton
-							onClick={handleAddLiquidity}
-						>
-							{`${isPending ? "Adding" : "Add"} Liquidity`}
-						</AddRemoveLiquidityActionButton>
-					</AddRemoveLiquidityFooter>
-				</AddRemoveLiquidityWrapper>
-			</ListBody>
-		</LiquidityList>
-	);
+  return (
+    <LiquidityList>
+      <ListHeader>
+        <Text justifyContent="flex-start" color="black" bold fontSize="20px">
+          Add Liquidity
+        </Text>
+        <Text justifyContent="flex-start" color="black">
+          Receive LP tokens and earn trading fees
+        </Text>
+        <Text
+          className="remove-button"
+          onClick={() => onChangeModalType(ModalType.REMOVE)}
+        >
+          Remove Liquidity
+        </Text>
+      </ListHeader>
+      <ListBody>
+        <AddRemoveLiquidityWrapper>
+          <PlusInGreenCircleIcon
+            onClick={() => onChangeModalType(ModalType.CREATE)}
+          />
+          <Text color="#787878" bold margin="5px 0">
+            CHOOSE A VALID PAIR
+          </Text>
+          <ReactSelect
+            value={pool}
+            onChange={handleChangePool}
+            options={liquidities}
+            isSearchable={false}
+            styles={{
+              container: (provided, state) => ({
+                ...provided,
+                margin: "5px 10px",
+                minWidth: 100,
+                width: "100%",
+                border: "1px solid black",
+                borderRadius: "15px",
+                background: "rgba(2, 226, 150, 0.15)",
+              }),
+              indicatorsContainer: (provided, state) => ({
+                ...provided,
+                padding: "10px",
+                cursor: "pointer",
+              }),
+              menu: (provided, state) => ({
+                ...provided,
+                backgroundColor: "#d9fbef",
+                border: "1px solid black",
+                borderRadius: "15px",
+                boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+                overflow: "auto",
+                maxHeight: "40vh",
+                zIndex: 10,
+              }),
+            }}
+            components={{
+              MenuList: CustomPoolsList,
+              Control: CustomPoolItem,
+              DropdownIndicator: (props) => (
+                <components.DropdownIndicator {...props}>
+                  <DropDownIcon fill="black" />
+                </components.DropdownIndicator>
+              ),
+              IndicatorSeparator: () => null,
+            }}
+          />
+          <Flex alignItems="center" gap="10px">
+            <TokenAmountInputer
+              token={pool?.token1}
+              amount={addAmount.token1}
+              onAmountChange={(amount) =>
+                handleChangeAddAmount(amount, "token1")
+              }
+            />
+            <TokenAmountInputer
+              token={pool?.token2}
+              amount={addAmount.token2}
+              onAmountChange={(amount) =>
+                handleChangeAddAmount(amount, "token2")
+              }
+            />
+          </Flex>
+          <AddRemoveLiquidityFooter>
+            <AddRemoveLiquidityActionButton onClick={handleAddLiquidity}>
+              {`${isPending ? "Adding" : "Add"} Liquidity`}
+            </AddRemoveLiquidityActionButton>
+          </AddRemoveLiquidityFooter>
+        </AddRemoveLiquidityWrapper>
+      </ListBody>
+    </LiquidityList>
+  );
 };
 
 export default AddLiquidity;
