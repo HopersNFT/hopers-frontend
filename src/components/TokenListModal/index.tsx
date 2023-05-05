@@ -68,8 +68,7 @@ const TokenListModal: React.FC<ITokenListModal> = ({
       .map((key) => {
         const tokenType = TokenType[key];
         return {
-          name: TokenFullName[tokenType],
-          //   name: key as string,
+          name: key as string,
           token: TokenType[key],
           imageUrl: `/coin-images/${tokenType.replace(/\//g, "")}.png`,
           balance:

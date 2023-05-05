@@ -42,7 +42,7 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
   [TokenType.wBTC]: "wrapped-bitcoin",
   [TokenType.PHMN]: "",
   [TokenType.GRDN]: "",
-  [TokenType.PEPE]: "",
+  [TokenType.PEPEC]: "",
   [TokenType.INVDRS]: "",
 };
 
