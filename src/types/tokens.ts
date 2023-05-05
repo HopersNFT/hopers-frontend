@@ -37,11 +37,12 @@ export enum TokenType {
   JAPE = "jape",
   PHMN = "phmn",
   GRDN = "grdn",
-  PEPE = "pepe",
+  PEPEC = "pepec",
   INVDRS = "invdrs",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
+  // TokenFullName[tokenType];
   (Object.keys(TokenType) as Array<keyof typeof TokenType>).filter(
     (key) => TokenType[key] === tokenType
   )[0];
@@ -83,7 +84,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
   [TokenType.wBTC]: "WBTC",
   [TokenType.PHMN]: "POSTHUMAN",
   [TokenType.GRDN]: "GRDN",
-  [TokenType.PEPE]: "PEPE",
+  [TokenType.PEPEC]: "PEPEC",
   [TokenType.INVDRS]: "INVDRS",
 };
 
@@ -356,7 +357,7 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
     contractAddress:
       "juno1xekkh27punj0uxruv3gvuydyt856fax0nu750xns99t2qcxp7xmsqwhfma",
   },
-  [TokenType.PEPE]: {
+  [TokenType.PEPEC]: {
     isNativeCoin: false,
     isIBCCoin: false,
     chain: ChainTypes.JUNO,

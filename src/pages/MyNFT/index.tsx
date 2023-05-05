@@ -606,32 +606,25 @@ const MyNFT: React.FC = () => {
 								tokenPrices[denom]?.market_data.current_price
 									?.usd || 0;
 							return (
-								<TokenBalanceItem
-									key={denom}
-									onClick={() =>
-										handleClickBalanceItem(denom)
-									}
-								>
-									<CoinIconWrapper>
-										<CoinIcon
-											alt=""
-											src={`/coin-images/${denom.replace(
-												/\//g,
-												""
-											)}.png`}
-										/>
-										<TokenBalance>{key}</TokenBalance>
-									</CoinIconWrapper>
-									<TokenBalance>
-										{addSuffix(tokenBalance)}
-										<Text style={{ fontSize: "0.8em" }}>
-											{`${addSuffix(
-												tokenBalance * tokenPrice
-											)}$`}
-										</Text>
-									</TokenBalance>
-								</TokenBalanceItem>
-							);
+                <TokenBalanceItem
+                  key={denom}
+                  onClick={() => handleClickBalanceItem(denom)}
+                >
+                  <CoinIconWrapper>
+                    <CoinIcon
+                      alt=""
+                      src={`/coin-images/${denom.replace(/\//g, "")}.png`}
+                    />
+                    <TokenBalance>{key}</TokenBalance>
+                  </CoinIconWrapper>
+                  <TokenBalance>
+                    {addSuffix(tokenBalance)}
+                    <Text style={{ fontSize: "0.8em" }}>
+                      {`${addSuffix(tokenBalance * tokenPrice)}$`}
+                    </Text>
+                  </TokenBalance>
+                </TokenBalanceItem>
+              );
 						})}
 					</Balances>
 				</TokenBalancesWrapper>
