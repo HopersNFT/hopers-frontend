@@ -42,9 +42,10 @@ export enum TokenType {
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
-  (Object.keys(TokenType) as Array<keyof typeof TokenType>).filter(
-    (key) => TokenType[key] === tokenType
-  )[0];
+  TokenFullName[tokenType];
+// (Object.keys(TokenType) as Array<keyof typeof TokenType>).filter(
+//   (key) => TokenType[key] === tokenType
+// )[0];
 
 export const TokenFullName: { [key in TokenType]: string } = {
   [TokenType.JUNO]: "JUNO",
@@ -83,7 +84,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
   [TokenType.wBTC]: "WBTC",
   [TokenType.PHMN]: "POSTHUMAN",
   [TokenType.GRDN]: "GRDN",
-  [TokenType.PEPE]: "PEPE",
+  [TokenType.PEPE]: "PEPEC",
   [TokenType.INVDRS]: "INVDRS",
 };
 
